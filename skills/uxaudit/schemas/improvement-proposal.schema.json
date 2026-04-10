@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:gotalab:uxaudit:schemas:improvement-proposal",
+  "title": "uxaudit improvement proposal",
+  "description": "Schema for the cross-check synthesis output produced by the Proposer subagent (Step 15 of the orchestrator playbook). Lives at <iteration-dir>/improvement-proposal.json. The Proposer reads all per-check verdicts plus project-context.json and produces a small set of ranked, project-aware fix proposals — the 'where do I start' answer to a long failure list. Validated by validate_results.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "verdict",
+    "root_causes",
+    "proposals"
+  ],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "minLength": 12,
+      "maxLength": 280,
+      "description": "One-sentence overall verdict in plain language. The headline shown at the top of the dashboard's 'Top fixes' section. Should be specific to THIS app, not generic."
+    },
+    "root_causes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "description": "Clusters of fails that share a single underlying problem. The Proposer's job is to find these — not to repeat the per-check suggestion list. Cap at 4 — when more clusters seem to exist, reconsider whether some are actually the same root cause described differently. Long lists defeat the synthesis goal.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "explains", "rationale"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 60,
+            "description": "Short label naming the root cause. 6–60 characters. The dashboard renders this as a heading inside the diagnosis row, so it must read at a glance — e.g., 'No brand identity', 'Cards not links', 'Single-user model breaks social journeys'. Avoid sentences and avoid jargon."
+          },
+          "explains": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*\\/[a-z][a-z0-9-]*$"
+            },
+            "description": "List of check_ids that this root cause is responsible for. Reference fails by their full id (e.g., 'ai-slop/purple-gradient')."
+          },
+          "impact_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Heuristic measure of impact — typically (#fails this explains) / (total fails) weighted by severity. The Proposer chooses how to compute it; the schema only requires it be in [0,1]."
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 16,
+            "description": "One to two sentences explaining WHY these fails cluster — what the shared underlying problem is. Should reference the project-context (brand, audience) where applicable."
+          }
+        }
+      }
+    },
+    "proposals": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "description": "Ranked, actionable proposals. The whole point of this file. Each proposal is a coherent unit of work that addresses one or more root causes. Limit 5 — if more, defer the rest.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["rank", "title", "addresses_fails", "concrete_steps", "why_first"],
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "1 = highest priority. Should be unique across the array — Proposer must pick a strict ordering."
+          },
+          "title": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 90,
+            "description": "Imperative sentence — what to do, not what's wrong. 8–90 characters. The reader should know what to do from the title alone, without reading the steps. e.g., 'Pick a brand color and a display font that fit home cooking', 'Wrap recipe cards in <a> and add data-testid to header CTA'. Avoid 'Improve X' / 'Better Y' — name the actual change."
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 12,
+            "maxLength": 200,
+            "description": "Optional one-sentence elaboration of the title in plain language. The 'what' and 'why' in 1 sentence — exists so the dashboard can show a tight 2-line proposal without expanding the implementation steps. Distinct from why_first (which justifies the rank position). Often unnecessary when the title is already clear."
+          },
+          "addresses_fails": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*\\/[a-z][a-z0-9-]*( \\(partial\\))?$"
+            },
+            "description": "Check ids this proposal closes. Suffix with ' (partial)' when the fix improves a check without fully passing it."
+          },
+          "concrete_steps": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 5,
+            "description": "Pointer-level actions in execution order — NOT a tutorial. Each step is a one-line decision or file pointer the developer can act on without further instruction. Cap: 5 items, each ≤80 characters. The bar is 'enough hint that an experienced developer can implement, no hand-holding'. The dashboard renders these inside a default-collapsed accordion — they exist so the reader can confirm the proposal is implementable, not as a step-by-step tutorial. Bad: 'In globals.css, find the .btn-primary class, then change the background-color from #C8553D to #B34A35 and verify the contrast ratio against parchment...'. Good: 'Lift `.btn-primary` background to #B34A35 (4.6:1 vs parchment)'.",
+            "items": {
+              "type": "string",
+              "minLength": 12,
+              "maxLength": 120
+            }
+          },
+          "estimated_files": {
+            "type": "array",
+            "description": "Optional. Repository-relative file paths the proposal will touch. The Proposer infers these from the project context; if it can't infer, leave the array empty rather than inventing.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "why_first": {
+            "type": "string",
+            "minLength": 16,
+            "description": "Why this proposal earned its rank position. Should mention impact-per-effort, not just impact. e.g., 'One commit closes 4 fails. Highest impact-per-effort.' Validates the ranking decision so a human can disagree intelligently."
+          },
+          "addresses_root_causes": {
+            "type": "array",
+            "description": "Names of root_causes this proposal addresses. Each entry must match a root_causes[].name exactly. The dashboard uses this to render the connection from the diagnosis row (root_causes) to the prescription row (proposals). Required in spirit whenever root_causes is non-empty — leaving it blank when root causes exist is treated as a content error by the Proposer prompt, even though the schema keeps it optional to allow the no-fails edge case.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "deferred": {
+      "type": "array",
+      "description": "Optional. Fails that the Proposer explicitly decided NOT to address in this iteration, with one-sentence reasons. Showing 'we saw it and chose not to act' is more honest than silently dropping fails from the proposal list.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["check_id", "reason"],
+        "properties": {
+          "check_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*\\/[a-z][a-z0-9-]*$"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 8
+          }
+        }
+      }
+    },
+    "project_context_used": {
+      "type": "boolean",
+      "description": "True iff the Proposer was able to read a non-empty project-context.json. When false, proposals are necessarily more generic (no brand language, no audience-specific framing). The dashboard shows a small badge so a human knows whether to trust the project-specific framings."
+    },
+    "project_context_summary": {
+      "type": "string",
+      "minLength": 12,
+      "maxLength": 320,
+      "description": "1–2 sentence prose summary of the project-context fields the Proposer actually leaned on (audience, brand voice, design-system constraints). Surfaced inside the dashboard's project-aware badge so the reader can see what the framing is grounded in. Required when project_context_used is true; absent when project_context_used is false."
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "model": {
+      "type": "string",
+      "description": "Optional record of the model used to generate this proposal (e.g., 'claude-sonnet-4-6')."
+    }
+  }
+}

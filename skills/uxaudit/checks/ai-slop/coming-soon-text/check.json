@@ -1,0 +1,11 @@
+{
+  "id": "ai-slop/coming-soon-text",
+  "name": "No 'coming soon' / TBD / placeholder labels",
+  "band": "ui-risk",
+  "method": "L1-script",
+  "severity": "major",
+  "source": "Krug DMMT Law #3 ('half the words') + Nielsen #10 (help & documentation honesty)",
+  "description": "Detects user-visible 'coming soon', 'under construction', 'TBD', 'placeholder', 'work in progress', or '準備中' / '近日公開' text. Each match indicates a feature was stubbed rather than built.",
+  "rationale": "A missing feature is honest. A stubbed feature is a lie that taxes the user's attention. Krug's Law #3 (Don't Make Me Think) says to ruthlessly cut noise — labels for things that don't exist are pure noise. Nielsen heuristic #10 frames help/documentation as something users should rarely need; 'coming soon' badges advertise the product's incompleteness instead. (Credo: No Dead Code — if it's labeled coming soon, it shouldn't exist yet.)",
+  "pass_criteria": "No visible text containing the patterns: coming soon, under construction, work in progress, TBD, placeholder, TODO (in user-visible context), 準備中, 近日公開, 作業中."
+}

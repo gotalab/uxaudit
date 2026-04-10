@@ -1,0 +1,11 @@
+{
+  "id": "ai-slop/generic-card-shadow",
+  "name": "No default Tailwind/Material card shadow",
+  "band": "ui-risk",
+  "method": "L1-script",
+  "severity": "minor",
+  "source": "NN/g 'AI Prototyping in Real Design Contexts' (nngroup.com/articles/ai-prototyping/)",
+  "description": "Detects unmodified Tailwind shadow-sm/shadow/shadow-md/shadow-lg/shadow-xl/shadow-2xl declarations or Material elevation defaults on white cards. The white-card-on-gray-bg-with-default-shadow pattern is the most stereotyped 'AI dashboard' look.",
+  "rationale": "NN/g's 2024-25 AI Prototyping research found that AI tools default to Shadcn+Tailwind because those dominate their training data, producing 'inconsistent spacing and margins' and 'no distinctive visual language' across products. The default Tailwind shadow on a white card is what every Tailwind tutorial produces. A product with intent picks borders, custom shadows tuned to the background color, or no decoration with strong typography, rather than accepting the framework default unmodified. (Note: this check fails on signal of defaults, not on shadow use in general.)",
+  "pass_criteria": "No box-shadow declarations matching the canonical Tailwind shadow tokens (0px 1px 3px rgba(0,0,0,0.1), 0px 4px 6px -1px rgba(0,0,0,0.1), etc.) or Material elevation defaults."
+}

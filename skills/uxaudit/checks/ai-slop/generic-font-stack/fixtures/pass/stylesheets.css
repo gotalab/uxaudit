@@ -1,0 +1,5 @@
+@font-face {
+  font-family: "Söhne";
+  src: url("/fonts/sohne.woff2") format("woff2");
+}
+body { font-family: Söhne, Inter, system-ui, sans-serif; }

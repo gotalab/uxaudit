@@ -1,0 +1,21 @@
+{
+  "id": "should-pass-flexible-href",
+  "name": "Flexible href prefix selector",
+  "goal": "Should NOT be flagged — uses href prefix match instead of hardcoded ID",
+  "starting_url": "http://localhost:3000",
+  "viewport": { "width": 1440, "height": 900 },
+  "viewport_only": false,
+  "steps": [
+    { "action": "navigate", "url": "/search" },
+    { "action": "type", "selector": "input[placeholder*='Search']", "text": "pasta" },
+    { "action": "click", "selector": "a[href^='/recipe/']:not([href='/recipe/new'])",
+      "expect_change": { "kind": "navigation", "timeout_ms": 5000 } },
+    { "action": "screenshot", "name": "detail" }
+  ],
+  "success_criteria": "lint should pass — no hardcoded dynamic IDs",
+  "context": "returning",
+  "_lint_expectation": {
+    "ok": true,
+    "static_lint_only": false
+  }
+}

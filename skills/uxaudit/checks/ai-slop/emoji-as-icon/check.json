@@ -1,0 +1,11 @@
+{
+  "id": "ai-slop/emoji-as-icon",
+  "name": "No emoji-as-icon in headings",
+  "band": "ui-risk",
+  "method": "L1-script",
+  "severity": "minor",
+  "source": "Krug DMMT Law #3 ('half the words') + NN/g 'Icon Usability' (https://www.nngroup.com/articles/icon-usability/)",
+  "description": "Detects headings, button labels, and section titles that begin with a decorative emoji ('📊 Analytics', '🚀 Features', '✨ Magic', '💡 Ideas'). 3+ such occurrences signal a slop pattern: when LLMs are asked to generate landing-page sections without art direction, they prefix every section with an emoji because it's the highest-probability way to add visual interest with text.",
+  "rationale": "Real products use icons (lucide, heroicons, custom SVG, brand icons) instead of emojis for section headers. Emojis-as-icons are the LLM's way to add visual interest without committing to an icon system. NN/g's icon usability research emphasizes that icons must be consistent and recognizable across contexts, which emojis fail because they render differently on every platform and cannot inherit the design's color language. Krug's Law #3 (cut noise) also applies: section emojis are decoration, not signal. The threshold (3+) ensures we don't flag legitimate uses like a single hero emoji or a category playlist where emoji ARE the design language.",
+  "pass_criteria": "Fewer than 3 headings/buttons/section labels begin with a decorative Unicode emoji."
+}

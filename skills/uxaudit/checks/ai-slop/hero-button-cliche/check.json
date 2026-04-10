@@ -1,0 +1,12 @@
+{
+  "id": "ai-slop/hero-button-cliche",
+  "name": "No 'Get Started' + 'Learn More' button cliché",
+  "band": "ux",
+  "subtype": "decide",
+  "method": "L1-script",
+  "severity": "minor",
+  "source": "Krug DMMT Law #3 ('cut half the words') + NN/g 'Microcontent: How to Write Headlines, Page Titles, and Subject Lines' (Nielsen 1998)",
+  "description": "Detects the canonical SaaS landing-page hero button pair: a primary CTA reading 'Get Started' / 'Get Started Free' / 'Start Free Trial' plus a secondary action reading 'Learn More' / 'Learn how it works'. This combo is the highest-probability output of every AI tool when asked to design a hero. It appears verbatim on tens of thousands of v0/Bolt/Lovable/Claude-generated pages.",
+  "rationale": "A real product's hero CTAs are concrete: 'Try the demo', 'See pricing', 'Read the changelog', 'Listen to a track', 'Book a table'. 'Get Started' + 'Learn More' is the LLM default because it's the safest, most generic phrasing, which commits to nothing about what the product actually does. NN/g's microcontent research (Nielsen 1998) showed that users decide whether to engage based on the first 6 words of a label, so a generic button label wastes the highest-leverage real estate on the page. Krug's Law #3: cut words that say nothing. The check fires when BOTH cliches appear close together, signaling the AI default rather than legitimate use of either phrase alone.",
+  "pass_criteria": "Does not contain BOTH (a) a button/link reading 'Get Started' / 'Get started free' / 'Start free trial' AND (b) a button/link reading 'Learn More' / 'Learn more' / 'Learn how it works' on the same page."
+}

@@ -1,0 +1,12 @@
+{
+  "id": "usability/feature-consistency",
+  "name": "New feature is consistent with the rest of the app",
+  "band": "ux",
+  "subtype": "act",
+  "method": "L3-vision",
+  "severity": "major",
+  "source": "Nielsen Heuristic #4 (Consistency and standards) + ISO 9241-110:2020 (Conformity with user expectations)",
+  "description": "A vision-LLM compares a target feature page against 2-3 reference pages from the same app, judging whether the new feature feels like it belongs. Catches button-style drift, voice mismatch, spacing-rhythm break, type-scale inconsistency, terminology divergence, motion mismatch, and the general 'this was bolted on' feeling. Specifically used in feature-scope evaluation mode.",
+  "rationale": "Nielsen's heuristic #4 ('Consistency and standards') is the most-violated heuristic when teams add features under deadline pressure: the new feature gets its own buttons, its own spacing, its own copywriter, and the app starts feeling like a Frankenstein. ISO 9241-110:2020 codifies this as 'conformity with user expectations.' The cognitive cost of inconsistency is real: every break in pattern forces the user to re-learn. Major design systems (Material, Apple HIG, IBM Carbon) all enshrine consistency as a foundational principle for the same reason. This check is the audit for 違和感: does the new feature feel like it belongs, or does it feel grafted on?",
+  "pass_criteria": "Comparing the target feature against the reference pages: button styles match (color, radius, weight, hover), copy voice matches (formal vs casual, terse vs conversational), spacing rhythm matches (the same scale of margin/padding), type scale matches (the same headline weights and sizes), terminology matches (same nouns for same things), and microinteractions feel consistent. Fails if there are 2+ visible inconsistencies, especially button style, voice, or spacing rhythm."
+}

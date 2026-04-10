@@ -1,0 +1,23 @@
+{
+  "name": "uxaudit",
+  "version": "0.1.0",
+  "description": "A UX regression testing skill for browser-based and webview-based apps. Runs after E2E to catch usability, journey, accessibility, and interface-quality issues before they ship.",
+  "homepage": "https://github.com/gotalab/uxaudit",
+  "repository": "https://github.com/gotalab/uxaudit",
+  "author": {
+    "name": "gotalab",
+    "url": "https://github.com/gotalab"
+  },
+  "license": "MIT",
+  "keywords": [
+    "ux",
+    "audit",
+    "usability",
+    "accessibility",
+    "wcag",
+    "nielsen",
+    "playwright",
+    "journey-testing",
+    "ai-slop"
+  ]
+}

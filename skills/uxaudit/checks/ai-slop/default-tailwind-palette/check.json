@@ -1,0 +1,11 @@
+{
+  "id": "ai-slop/default-tailwind-palette",
+  "name": "Custom palette beyond Tailwind defaults",
+  "band": "ui-risk",
+  "method": "L1-script",
+  "severity": "minor",
+  "source": "NN/g 'AI Prototyping in Real Design Contexts' (nngroup.com/articles/ai-prototyping/)",
+  "description": "Detects when a page's color palette consists almost entirely of canonical Tailwind hex values with no custom brand colors. If 85%+ of the unique colors used are stock Tailwind tokens (slate-900, blue-500, gray-50, etc.) and zero non-canonical hexes appear, the project skipped customizing tailwind.config theme.extend.colors, which is a strong slop tell.",
+  "rationale": "A real product has at least one brand color. Even a minimal one (a single accent) demonstrates that someone made a color decision. AI tools default to the canonical Tailwind palette (slate/zinc/gray/blue) because those are the highest-probability tokens in the training data. NN/g's 2024-25 AI Prototyping study found AI tools converge on this exact palette across products, producing 'no distinctive visual language.' This check fires only on the strong signal: NO non-canonical hex appears in the rendered CSS, meaning theme.extend.colors was never touched.",
+  "pass_criteria": "At least one non-canonical-Tailwind hex color appears in the captured stylesheets (signaling the project added at least one custom brand color). If 85%+ of unique colors are Tailwind defaults AND zero customs exist, fail."
+}

@@ -1,0 +1,21 @@
+{
+  "id": "should-pass-kebab-slug",
+  "name": "Kebab-case slug in href",
+  "goal": "Should NOT be flagged — kebab slugs are stable across reseeds",
+  "starting_url": "http://localhost:3000",
+  "viewport": { "width": 1440, "height": 900 },
+  "viewport_only": false,
+  "steps": [
+    { "action": "click", "selector": "a[href$='/browse?tag=meal-dinner']",
+      "expect_change": { "kind": "navigation", "timeout_ms": 5000 } },
+    { "action": "click", "selector": "a[href='/recipe/slow-cooker-beef-stew-with-root-vegetables']",
+      "expect_change": { "kind": "navigation", "timeout_ms": 5000 } },
+    { "action": "screenshot", "name": "after" }
+  ],
+  "success_criteria": "lint should pass — kebab slugs only",
+  "context": "returning",
+  "_lint_expectation": {
+    "ok": true,
+    "static_lint_only": false
+  }
+}

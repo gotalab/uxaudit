@@ -1,0 +1,11 @@
+{
+  "id": "ai-slop/cta-trailing-emoji",
+  "name": "No trailing emoji in CTA buttons",
+  "band": "ui-risk",
+  "method": "L1-script",
+  "severity": "minor",
+  "source": "Apple HIG, Buttons ('Use SF Symbols, not emoji, in UI controls', https://developer.apple.com/design/human-interface-guidelines/buttons) + Krug DMMT Law #2 ('We don't read, we scan')",
+  "description": "Detects the LLM-favored pattern of decorating CTA buttons with a trailing emoji ('Get started ✨', 'Try it 🚀', 'Generate now ✨'). The trailing-emoji pattern is distinct from section-header emoji prefixes (covered by ai-slop/emoji-as-icon): it's button-scoped decoration meant to signal excitement or magic without committing to a brand voice. Apple HIG explicitly calls out not using emoji in UI controls. Linear, Vercel, Stripe, Notion all ship CTAs without trailing emoji. A single occurrence is a weak signal. 2+ is the threshold.",
+  "rationale": "Trailing button emojis substitute for CTA microcopy. A CTA's job is to name the next step precisely ('Install the CLI', 'Start for free', 'Talk to sales') because users scan buttons word-by-word (Krug, DMMT Law #2: 'We don't read, we scan'). An emoji at the end of a label does not disambiguate the action. The user still has to read the verb. It's noise, not signal. Apple HIG states that UI controls should use SF Symbols (vector, sizeable, color-controllable, platform-consistent), not emoji, which render differently across macOS/Windows/Android/Linux and cannot inherit button color. Every trailing CTA emoji the user pays for is (a) an extra glyph to parse, (b) a cross-platform rendering inconsistency, and (c) a signal that the copywriter ran out of precise verbs.",
+  "pass_criteria": "Fewer than 2 button/CTA elements whose text ends with a decorative emoji (not counting leading emojis, which are covered by ai-slop/emoji-as-icon)."
+}

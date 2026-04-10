@@ -1,0 +1,32 @@
+# Dependencies (lazy-installed in plugin mode, or local for standalone)
+node_modules/
+venv/
+.venv/
+
+# Playwright browser binaries (lazy-installed)
+browsers/
+playwright-cache/
+.playwright-cli/
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Editor state
+.vscode/
+.idea/
+*.swp
+
+# uxaudit workspace output (local audit runs)
+.agents/
+output/
+
+# Plugin state (should never be committed)
+plugin-data/
+registry.json
+library.html

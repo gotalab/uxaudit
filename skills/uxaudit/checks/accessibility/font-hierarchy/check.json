@@ -1,0 +1,12 @@
+{
+  "id": "accessibility/font-hierarchy",
+  "name": "Distinct heading font hierarchy",
+  "band": "ux",
+  "subtype": "understand",
+  "method": "L1-script",
+  "severity": "minor",
+  "source": "WCAG 2.4.6 Headings and Labels + Krug DMMT Ch3 (scannability)",
+  "description": "Checks whether h1, h2, and body text have computed font-size ratios that produce a scannable hierarchy. Fails if h1 ≤ 1.3× body, h1 ≈ h2, or h2 ≤ 1.1× body.",
+  "rationale": "WCAG SC 2.4.6 (Headings and Labels, AA) requires that headings describe topic or purpose — but headings only function as navigation aids if they're visually distinguishable. Steve Krug's *Don't Make Me Think* (Ch 3, 'Billboard Design 101') argues that scanning depends on visual hierarchy: if h1, h2, and body text are the same size, the user can't skim. This check uses the computed-styles.json from capture.mjs to verify the hierarchy is mechanically present.",
+  "pass_criteria": "h1 ≥ 1.3× body font-size AND h1 ≥ 1.15× h2 font-size AND h2 ≥ 1.1× body font-size, when h1/h2/body are all present."
+}

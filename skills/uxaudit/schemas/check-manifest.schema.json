@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:gotalab:uxaudit:schemas:check-manifest",
+  "title": "uxaudit check manifest",
+  "description": "Schema for /Users/gota/.claude/skills/uxaudit/checks/<category>/<name>/check.json. Every check the orchestrator runs is described by one of these. Validated by scripts/validate_checks.py before run_all_checks.py executes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "name",
+    "band",
+    "method",
+    "severity",
+    "source",
+    "description",
+    "rationale",
+    "pass_criteria"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*\\/[a-z][a-z0-9-]*$",
+      "description": "Stable check identifier in '<category>/<name>' form. Must match the on-disk path checks/<category>/<name>/check.json. Lowercase, kebab-case."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 6,
+      "maxLength": 120,
+      "description": "Short human-readable label shown in the dashboard. State what the check verifies, not what fails. e.g., 'No purple/violet/indigo default gradient' (good), 'purple gradient' (bad)."
+    },
+    "band": {
+      "type": "string",
+      "enum": [
+        "ux",
+        "ui-risk"
+      ],
+      "description": "High-level bucket used for simple reporting. `ux` means the check is about whether a human can understand, decide, and accomplish the task. `ui-risk` means the check flags templated, sloppy, or risky UI patterns that tend to degrade the experience."
+    },
+    "subtype": {
+      "type": "string",
+      "enum": ["understand", "decide", "act", "recover"],
+      "description": "Secondary axis for `ux` band checks: which part of the user's flow does this check operate on? `understand` (can they parse what they're seeing?), `decide` (can they decide what to do next?), `act` (can they execute the decision?), `recover` (can they recover when something goes wrong?). Required when band == 'ux'; must be absent when band == 'ui-risk'. The conditional rule is enforced by validate_checks.py imperatively (not by JSON Schema if/then)."
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "L1-script",
+        "L2-script",
+        "L3-vision",
+        "L4-journey"
+      ],
+      "description": "How the check runs. L1=Python detect.py, L2=Node run.mjs (Playwright), L3=vision-LLM subagent reading prompt.md, L4=pixel-only journey Judge reading prompt.md and escalating to computer-use only when needed."
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "major",
+        "minor"
+      ],
+      "description": "Editorial weight: critical (blocks shipping), major (should fix before release), minor (polish/iterate). The aggregator uses this for the verdict calculation."
+    },
+    "source": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 400,
+      "description": "Citation chain. Every check that involves a judgment call is grounded in published, publicly-verifiable research (NN/g, WCAG, ISO, Krug, Norman, Cooper, Christensen, peer-reviewed studies). Self-evident anti-patterns (lorem ipsum, 'Coming soon' stubs) can ship with a single minimal anchor. Use 'Primary + Secondary' format when triangulation matters. The validator warns on 4+ sources (redundancy) and on proprietary/tweet/blog citations. See references/knowledge/sources.md for the allow-list and the 'don't invent' rule."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 600,
+      "description": "What the check actually inspects. Concrete and concise — not marketing. Should answer 'what does this scan for?' in 1-3 sentences."
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 40,
+      "description": "Why this matters: the research/principle the check is grounded in. Should NOT use vague boost-words ('improves UX', 'better usability'). Cite specific frameworks (WCAG/Nielsen/Krug/NN/g/ISO/Anthropic/etc.) and explain what failing this check costs the user. The validator warns on vague rationale."
+    },
+    "pass_criteria": {
+      "type": "string",
+      "minLength": 20,
+      "description": "What 'pass' means in measurable terms. Two judges reading this should agree on the verdict. Use thresholds (counts, ratios, ranges), not adjectives ('well', 'good', 'reasonable'). The validator warns when adjectives dominate over thresholds."
+    }
+  }
+}

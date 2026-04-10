@@ -1,0 +1,11 @@
+{
+  "id": "ai-slop/lorem-ipsum-data",
+  "name": "No Lorem ipsum or template placeholder data",
+  "band": "ui-risk",
+  "method": "L1-script",
+  "severity": "major",
+  "source": "ISO 9241-11:2018 Effectiveness (https://www.iso.org/standard/63500.html)",
+  "description": "Detects Lorem ipsum text or generic placeholder data (John Doe, Jane Smith, user@example.com, 123 Main St, foo bar) shown to users.",
+  "rationale": "ISO 9241-11 defines usability as the extent to which a user can achieve goals with effectiveness in their context of use. Lorem ipsum and placeholder data signal the data layer isn't connected: the user sees an unfinished prototype, not a product. Real content or empty states are both honest. Placeholder content is the dishonest middle. This is a self-evident stub tell: shipped apps should not contain unshipped content.",
+  "pass_criteria": "No visible text containing 'lorem ipsum', 'dolor sit amet', 'John Doe', 'Jane Doe', 'user@example.com', '123 Main St', or other canonical placeholder strings."
+}

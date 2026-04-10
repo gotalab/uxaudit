@@ -1,0 +1,11 @@
+{
+  "id": "ai-slop/placeholder-names",
+  "name": "No textbook placeholder names (Alice/Bob/Charlie)",
+  "band": "ui-risk",
+  "method": "L1-script",
+  "severity": "minor",
+  "source": "ISO 9241-11:2018 Effectiveness (https://www.iso.org/standard/63500.html)",
+  "description": "Detects when 2+ textbook cryptography names (Alice, Bob, Charlie, Eve, Mallory, Trent, Walter) appear in user-facing data, a tell that the seed data was generated from LLM defaults rather than the product's domain.",
+  "rationale": "ISO 9241-11 defines usability in terms of 'specified users' and 'context of use,' which means the data the user sees should fit that context. A Japanese-market app should not show Alice/Bob/Charlie as users. A hardware-store app should not show John Doe or Jane Smith as customers. Default names suggest the prototype was never connected to the product's actual domain. Use names that fit the context.",
+  "pass_criteria": "Fewer than 2 textbook cryptography names appear in the visible text."
+}

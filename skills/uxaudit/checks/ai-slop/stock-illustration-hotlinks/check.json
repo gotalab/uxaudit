@@ -1,0 +1,11 @@
+{
+  "id": "ai-slop/stock-illustration-hotlinks",
+  "name": "No undraw / storyset / freepik stock illustration hotlinks",
+  "band": "ui-risk",
+  "method": "L1-script",
+  "severity": "minor",
+  "source": "NN/g 'AI Prototyping in Real Design Contexts' (nngroup.com/articles/ai-prototyping/)",
+  "description": "Detects <img> or background-image references to undraw.co, storyset.com, freepik.com, manypixels.co, illustrations.popsy.co, drawkit.com, or icons8.com: the canonical stock-illustration sources AI tools fall back on when asked for hero artwork without art direction. Even one such hotlink is a strong slop signal.",
+  "rationale": "Stock illustrations from these sources are recognizable: pastel flat-design figures with generic poses, used by tens of thousands of landing pages because they're free and Tailwind-compatible. They're the visual equivalent of Lorem ipsum: they say 'we needed art and didn't have any.' NN/g's 2024-25 AI Prototyping study documented how AI tools default to these same libraries because they dominate the training data. A real product either invests in custom illustration, uses meaningful product screenshots, or uses no imagery at all (typography-led). Hotlinking to undraw/storyset is the AI slop default.",
+  "pass_criteria": "No <img src> or url() reference points to undraw.co, storyset.com, freepik.com, manypixels.co, illustrations.popsy.co, drawkit.com, or icons8.com."
+}

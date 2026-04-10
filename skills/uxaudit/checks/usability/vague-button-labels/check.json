@@ -1,0 +1,12 @@
+{
+  "id": "usability/vague-button-labels",
+  "name": "Button labels are specific, not vague",
+  "band": "ux",
+  "subtype": "decide",
+  "method": "L1-script",
+  "severity": "minor",
+  "source": "Krug DMMT Law #1 (self-evident labels) + Nielsen #2 (match real world) + Nielsen #4 (consistency)",
+  "description": "Detects buttons with vague, generic, or technical labels: 'Submit', 'OK', 'Click here', 'Click', 'Button', 'Go', 'Send', when used as the primary action label. Specific labels like 'Save changes', 'Send invoice', 'Add to cart' tell the user what will happen.",
+  "rationale": "Steve Krug's Law #1 ('Don't Make Me Think') says button labels should be self-evident — the user shouldn't have to guess what 'Submit' means. Nielsen heuristic #2 (Match between system and the real world) says to use the user's vocabulary, not technical jargon. 'Submit' is a holdover from HTML form spec; 'OK' communicates nothing about what's being OK'd. NN/g research on form usability consistently shows that descriptive button labels reduce form abandonment.",
+  "pass_criteria": "Fewer than 3 buttons have a label that is exactly one of: Submit, OK, Click here, Click, Button, Go, Cancel (cancel is OK if there's a confirm/affirm button nearby), Send (alone), Done (alone)."
+}

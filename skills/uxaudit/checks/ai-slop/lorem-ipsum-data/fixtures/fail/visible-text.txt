@@ -1,0 +1,6 @@
+Profile
+
+Name: John Doe
+Email: user@example.com
+Address: 123 Main St
+Bio: Lorem ipsum dolor sit amet, consectetur adipiscing elit.

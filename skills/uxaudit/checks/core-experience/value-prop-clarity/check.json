@@ -1,0 +1,12 @@
+{
+  "id": "core-experience/value-prop-clarity",
+  "name": "Within 5 seconds, you know what this app does",
+  "band": "ux",
+  "subtype": "understand",
+  "method": "L3-vision",
+  "severity": "critical",
+  "source": "Krug DMMT Ch 6 'Street signs and breadcrumbs' + NN/g 'Homepage Usability: 50 Websites Deconstructed' (Nielsen 2001) + Christensen 'Jobs To Be Done'",
+  "description": "A vision-LLM acts as a brand-new visitor and judges whether, looking at the screenshot for 5 seconds, they can answer two questions: (1) what does this app do? (2) what would I use it for? If the answers are not obvious from the page itself, the value proposition is not communicating.",
+  "rationale": "Krug's Chapter 6 'street signs and breadcrumbs' establishes that every page must answer 'where am I?' and 'what is this for?' within seconds. Nielsen's 2001 homepage research tested 50 sites and found that the most common failure is users not understanding what the company does within 10 seconds. Christensen's Jobs To Be Done framework argues that products are 'hired' for a specific job in a specific context: if a first-time visitor can't tell what job this app does, they won't hire it. This check is the most direct measurement of whether the product's core value reaches the user.",
+  "pass_criteria": "Looking at the screenshot for 5 seconds or less, a first-time visitor can answer (a) what kind of thing this is (a booking system, a spreadsheet, a chat, a journal) and (b) who or what it's for (restaurants, freelancers, families, etc.). The headline, the visible content, or the dominant CTA must communicate this without requiring scroll, click, or tooltip. Fails if the page could plausibly be any one of 5+ different SaaS products."
+}

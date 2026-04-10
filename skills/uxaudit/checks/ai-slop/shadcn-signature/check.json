@@ -1,0 +1,11 @@
+{
+  "id": "ai-slop/shadcn-signature",
+  "name": "No unmodified shadcn/ui component signature",
+  "band": "ui-risk",
+  "method": "L1-script",
+  "severity": "minor",
+  "source": "NN/g 'AI Prototyping in Real Design Contexts' (nngroup.com/articles/ai-prototyping/)",
+  "description": "Detects the literal class signatures of unmodified shadcn/ui Button and Card components. v0, Bolt, and Lovable all emit identical shadcn class strings because shadcn dominates their training data. The exact base-class string is a fingerprint that the components were generated rather than designed.",
+  "rationale": "shadcn/ui is a great primitive library, but the canonical Button class string ('inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium...') is what every AI tool emits unmodified. NN/g's 2024-25 AI Prototyping study found that AI tools converge on Tailwind+shadcn defaults producing 'a similar, generic look: sans-serif typeface, minimalist styling, flat and interchangeable appearance' because those dominate the training data. Using shadcn is fine. Using it without ANY visual customization is the slop tell. We look for 2+ unmodified shadcn signature strings to avoid false positives on libraries that legitimately reuse the primitive.",
+  "pass_criteria": "Fewer than 2 elements match the canonical shadcn/ui Button or Card base-class string (literal substring match on the unmodified signatures from ui.shadcn.com)."
+}

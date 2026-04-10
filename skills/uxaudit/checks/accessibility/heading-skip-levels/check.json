@@ -1,0 +1,12 @@
+{
+  "id": "accessibility/heading-skip-levels",
+  "name": "Heading levels not skipped (h1 → h2 → h3, no jumps)",
+  "band": "ux",
+  "subtype": "understand",
+  "method": "L1-script",
+  "severity": "minor",
+  "source": "WCAG 1.3.1 Info and Relationships (Level A) + /rams Moderate tier",
+  "description": "Checks the heading outline for skipped levels (e.g., h1 followed directly by h3, or no h1 at all). Screen readers expose headings as a navigable structure, so skipped levels confuse the document outline.",
+  "rationale": "WCAG SC 1.3.1 (Info and Relationships, Level A) requires that 'information, structure, and relationships conveyed through presentation can be programmatically determined.' The heading hierarchy is the primary skim/navigation structure for screen reader users. The /rams design review classifies skipped heading levels as a Moderate accessibility issue. A page should have exactly one h1 (the page topic) and h2-h6 should follow without skipping.",
+  "pass_criteria": "Exactly one h1 element exists, and traversing the headings in document order never increases the level by more than 1 (h1 → h2 OK; h2 → h3 OK; h2 → h4 NOT OK)."
+}

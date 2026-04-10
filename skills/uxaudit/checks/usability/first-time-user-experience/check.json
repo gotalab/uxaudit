@@ -1,0 +1,12 @@
+{
+  "id": "usability/first-time-user-experience",
+  "name": "First-time user reaches first value quickly",
+  "band": "ux",
+  "subtype": "act",
+  "method": "L4-journey",
+  "severity": "critical",
+  "source": "NN/g 'First Use vs Returning Use' (Pernice 2019) + ISO 9241-110:2020 (Suitability for learning)",
+  "description": "A pixel-only journey Judge opens the app in a fresh incognito session (no cookies, no saved data) and walks the first-time user experience until reaching 'first value', the moment the user accomplishes something meaningful. The Judge decides from visible state only, screenshots after each action, and escalates to computer-use only when the runtime leaves Playwright. Measures: clicks to first value, friction in onboarding, whether onboarding is skippable, whether the empty state guides forward, whether account creation is forced before value.",
+  "rationale": "NN/g's research on first-time vs returning users shows that the two require different evaluations: first-time users need to learn the app while accomplishing something, returning users just need to work fast. ISO 9241-110:2020 codifies 'suitability for learning' as a usability dimension. Most apps fail this not because onboarding is broken but because they require account creation, ask for too much info, or hide the value behind a tutorial. This check is the audit for 'would a brand-new user actually get to value, or would they bounce?'",
+  "pass_criteria": "From a fresh incognito context, a first-time user reaches a meaningful first value within: (a) 5 or fewer clicks, (b) without forced account creation if the app's value is publicly delivered, (c) with onboarding that is skippable OR genuinely valuable, (d) with the first action having clear feedback that the user accomplished something. Fails if: account creation is mandatory before any value, onboarding is unskippable and longer than 30 seconds, the empty state offers no clear next action, or the user has to make 3+ decisions before reaching the main view."
+}

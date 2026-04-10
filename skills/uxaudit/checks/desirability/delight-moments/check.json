@@ -1,0 +1,11 @@
+{
+  "id": "desirability/delight-moments",
+  "name": "Considered delight moments (not just functional)",
+  "band": "ui-risk",
+  "method": "L3-vision",
+  "severity": "minor",
+  "source": "Don Norman 'Emotional Design' (Visceral / Behavioral / Reflective) + Aarron Walter 'Designing for Emotion' (A Book Apart 2011)",
+  "description": "A vision-LLM looks for evidence that someone went the extra mile: considered micro-interactions, surprise+delight moments, custom illustrations, deliberate motion, microcopy with voice. The opposite of 'merely functional.' This is the check that catches the difference between an app that works and an app users want to keep using.",
+  "rationale": "Don Norman's 'Emotional Design' separates three layers: visceral (immediate aesthetic), behavioral (it works), and reflective (it makes me feel something). Most LLM-generated UIs achieve only the behavioral layer. Aarron Walter's 'Designing for Emotion' argues that delightful micro-moments are what convert users into advocates. This check is the audit for whether the product team chose to invest in any moment beyond 'it works.' Lacks delight means the app passes the floor but never reaches loved.",
+  "pass_criteria": "The page shows at least 2 specific delight signals from the catalog: a considered micro-animation (not stock fade-in), a deliberate motion easing curve, a custom illustration tied to the brand, microcopy with personality (not just labels), an unexpected detail that rewards attention (a pun in a tooltip, a custom 404, a celebration on first action), an EXIF-quality photograph instead of a stock illustration, distinctive button hover treatments visible in the screenshot, or a graceful empty state with personality. Fails if the page is purely functional with zero personality."
+}

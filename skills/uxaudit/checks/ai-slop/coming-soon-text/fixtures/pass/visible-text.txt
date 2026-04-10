@@ -1,0 +1,8 @@
+Welcome to our recipe app
+
+Cookbooks
+Recent recipes
+Pantry
+Meal plan
+
+Add a recipe by snapping a photo or pasting a URL.

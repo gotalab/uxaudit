@@ -1,0 +1,11 @@
+{
+  "id": "desirability/visual-craft",
+  "name": "Visual craft — bespoke vs templated",
+  "band": "ui-risk",
+  "method": "L3-vision",
+  "severity": "major",
+  "source": "NN/g 'AI Prototyping in Real Design Contexts' (nngroup.com/articles/ai-prototyping/)",
+  "description": "A vision-LLM judges whether the interface shows evidence of hand-crafting (deliberate detail choices that distinguish it from a framework template) versus reading as an AI-generated assembly of default components. Catches the 'I can tell this was vibe-coded' tell.",
+  "rationale": "NN/g's 2024-25 AI Prototyping research tested Bolt, Claude, Figma Make, v0, Stitch, UX Pilot, Lovable, and Replit and documented the same slop signature across all of them: 'a similar, generic look' with 'sans-serif typeface, minimalist styling, flat and interchangeable appearance' plus 'poor visual hierarchy, inadequate color contrast, inconsistent spacing and margins, no distinctive visual language.' NN/g's finding is that AI tools 'default to Shadcn components and Tailwind CSS because those dominate their training data,' which produces homogenization across products. Distinctive craft is the most reliable signal that a human (or a careful LLM operator) actually cared about how it looks. Without it, users perceive the product as AI-slop and discount its credibility even when every feature works.",
+  "pass_criteria": "The interface shows at least 3 specific craft details that distinguish it from a generic Tailwind/Bootstrap/MUI template: a non-default border-radius rhythm, a deliberate type weight contrast, asymmetric or non-grid layout choices, a custom illustration / icon set / divider, distinctive color stops, considered hover / focus states, or a unified motif applied throughout. Fails if the page is fundamentally a stack of card-shadow-md rounded-lg components with default spacing."
+}

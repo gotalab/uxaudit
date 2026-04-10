@@ -1,0 +1,16 @@
+{
+  "name": "gotalab-uxaudit",
+  "owner": {
+    "name": "gotalab"
+  },
+  "metadata": {
+    "description": "Agent skills from gotalab, including uxaudit for post-E2E UX regression testing."
+  },
+  "plugins": [
+    {
+      "name": "uxaudit",
+      "source": "./",
+      "description": "UX regression testing for browser-based and webview-based apps."
+    }
+  ]
+}

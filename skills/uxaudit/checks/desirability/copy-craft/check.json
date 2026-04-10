@@ -1,0 +1,12 @@
+{
+  "id": "desirability/copy-craft",
+  "name": "Copy craft — voice and specificity",
+  "band": "ux",
+  "subtype": "understand",
+  "method": "L3-vision",
+  "severity": "major",
+  "source": "NN/g 'Microcontent: How to Write Headlines, Page Titles, and Subject Lines' (Nielsen 1998) + Krug DMMT Ch 5 'Omit needless words'",
+  "description": "A vision-LLM reads the visible copy on the page (headlines, button labels, microcopy) and judges whether it has a specific voice and concrete language, or whether it's marketing-buzzword filler ('Empower your workflow', 'Streamline your business', 'Get Started').",
+  "rationale": "Nielsen's microcontent research established that users decide whether to engage based on the first 6 words of any heading or label. Marketing buzzwords convey nothing, so they fail this test by definition. Krug's third law is 'omit needless words.' Generic copy is the textual analog of generic visuals: it signals that no one made specific choices, which signals that the product itself may not be specific either. This check catches the LLM tendency to write 'safe' copy that says nothing.",
+  "pass_criteria": "The visible copy uses specific, concrete language tied to what the app actually does — not generic verbs (empower / streamline / unlock / transform) and not generic nouns (workflow / experience / solution / platform). Headlines name a specific outcome or noun. Buttons name a specific verb action ('Reserve seat 14', not 'Get Started'). Microcopy adds information, not decoration. Fails if the page could be cut-and-paste onto any other product without changing a word."
+}

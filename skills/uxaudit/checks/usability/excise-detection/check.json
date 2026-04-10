@@ -1,0 +1,12 @@
+{
+  "id": "usability/excise-detection",
+  "name": "No unnecessary work (Cooper's excise)",
+  "band": "ux",
+  "subtype": "decide",
+  "method": "L3-vision",
+  "severity": "major",
+  "source": "Cooper 'About Face' Ch 11 'Eliminating Excise' (4th ed) + Krug DMMT Law #3 ('Get rid of half the words') + NN/g 'Confirmation Dialogs Can Prevent User Errors — But Are Often Misused' (Pernice 2016)",
+  "description": "A vision-LLM scans the page for evidence of Alan Cooper's 'excise' — work the user must do that does not directly serve their goal. Catches confirmation-on-reversible-actions, modal interruption, unnecessary required fields, multi-step where one step works, decorative acknowledgments, re-asking for known info, forced account creation, paywalled basics, and other extraction the design imposes on the user.",
+  "rationale": "Cooper defines excise as 'all the activities that don't contribute to the user's goals — they exist only because the system exists.' Krug's third law is 'Get rid of half the words.' NN/g's confirmation-dialog research shows that 'Are you sure?' on reversible actions trains users to ignore confirmations, breaking them when they actually matter. Every unnecessary step compounds: a 5-step flow with one excise step is 20% pure waste. Across an app, a few excise patterns drag down the entire perceived quality. This check is the audit for 無駄 — waste — in the interaction design.",
+  "pass_criteria": "The visible page contains zero excise patterns from the catalog: no confirmation on reversible actions, no modal mid-task interruption, no required field that could be optional, no multi-step where one step would work, no decorative acknowledgment toast for trivial actions, no re-asking for known info, no forced account creation before any value, no paywalled basics, no unnecessary breadcrumb-from-nowhere navigation cost. If the page is action-only (no decisions for the user), pass by default."
+}

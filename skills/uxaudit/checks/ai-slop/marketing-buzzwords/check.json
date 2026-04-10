@@ -1,0 +1,12 @@
+{
+  "id": "ai-slop/marketing-buzzwords",
+  "name": "Marketing buzzword density",
+  "band": "ux",
+  "subtype": "understand",
+  "method": "L1-script",
+  "severity": "minor",
+  "source": "Krug DMMT Law #3 ('cut half the words') + NN/g 'Microcontent: How to Write Headlines, Page Titles, and Subject Lines' (Nielsen 1998)",
+  "description": "Counts the density of marketing buzzwords in user-visible text: powerful, intuitive, seamless, robust, cutting-edge, next-generation, revolutionary, game-changing, world-class, best-in-class, state-of-the-art, transform, empower, leverage, synergy, holistic, paradigm, ecosystem, etc. Fails if buzzword density exceeds ~2% of total visible words.",
+  "rationale": "Steve Krug's *Don't Make Me Think*, Law #3: 'Get rid of half the words on each page, then get rid of half of what's left.' Marketing buzzwords are the highest-density form of words-that-say-nothing. They survive in copy because no one pushed back. An LLM, untouched, fills empty space with these tokens because they're the highest-probability completions of 'write marketing copy'. A real product describes what it does, not how revolutionary it is.",
+  "pass_criteria": "Buzzword density (count of buzzwords ÷ total visible words) is less than 0.02 (2%) AND fewer than 5 distinct buzzwords appear total."
+}

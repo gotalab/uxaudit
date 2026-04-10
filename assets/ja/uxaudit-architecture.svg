@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 700" font-family="'Hiragino Sans', 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arr-uxaudit" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="14" markerHeight="14" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#4c1d95"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="700" fill="#ffffff"/>
+
+  <!-- Title / tagline -->
+  <text x="800" y="38" font-size="26" font-weight="700" fill="#1A1A2E" text-anchor="middle">安いチェックから順に走らせて、原因でまとめて提案する</text>
+
+  <!-- Top block: Understand the app -->
+  <rect x="400" y="72" width="800" height="90" rx="14" ry="14" fill="#F5F3FF" stroke="#8b5cf6" stroke-width="3"/>
+  <text x="800" y="110" font-size="26" font-weight="800" fill="#4c1d95" text-anchor="middle">アプリを理解する</text>
+  <text x="800" y="140" font-size="19" fill="#6d28d9" text-anchor="middle">README / spec / 画面から、どんなジャーニーを評価すべきか洗い出す</text>
+
+  <!-- Arrow down -->
+  <line x1="800" y1="168" x2="800" y2="212" stroke="#4c1d95" stroke-width="3.5" marker-end="url(#arr-uxaudit)"/>
+
+  <!-- Pipeline header -->
+  <text x="800" y="240" font-size="24" font-weight="800" fill="#4c1d95" text-anchor="middle">安い → 高い の順でチェックを走らせる</text>
+
+  <!-- Pipeline: 4 horizontal boxes with cost gradient -->
+  <!-- Box 1: Static scan (ms) -->
+  <rect x="100" y="262" width="320" height="130" rx="12" ry="12" fill="#ECFDF5" stroke="#10b981" stroke-width="2.5"/>
+  <text x="260" y="302" font-size="22" font-weight="800" fill="#065f46" text-anchor="middle">静的スキャン</text>
+  <line x1="160" y1="316" x2="360" y2="316" stroke="#6ee7b7" stroke-width="1.5"/>
+  <text x="260" y="340" font-size="16" fill="#6b7280" text-anchor="middle">CSS / HTML を regex で</text>
+  <text x="260" y="372" font-size="22" font-weight="700" fill="#10b981" text-anchor="middle">ミリ秒</text>
+
+  <line x1="420" y1="327" x2="458" y2="327" stroke="#4c1d95" stroke-width="3" marker-end="url(#arr-uxaudit)"/>
+
+  <!-- Box 2: Browser measurement (s) -->
+  <rect x="460" y="262" width="320" height="130" rx="12" ry="12" fill="#FFFBEB" stroke="#f59e0b" stroke-width="2.5"/>
+  <text x="620" y="302" font-size="22" font-weight="800" fill="#92400e" text-anchor="middle">ブラウザ計測</text>
+  <line x1="520" y1="316" x2="720" y2="316" stroke="#fcd34d" stroke-width="1.5"/>
+  <text x="620" y="340" font-size="16" fill="#6b7280" text-anchor="middle">Playwright で a11y / DOM</text>
+  <text x="620" y="372" font-size="22" font-weight="700" fill="#f59e0b" text-anchor="middle">秒</text>
+
+  <line x1="780" y1="327" x2="818" y2="327" stroke="#4c1d95" stroke-width="3" marker-end="url(#arr-uxaudit)"/>
+
+  <!-- Box 3: Image judge (tens of seconds) -->
+  <rect x="820" y="262" width="320" height="130" rx="12" ry="12" fill="#FDF2F8" stroke="#ec4899" stroke-width="2.5"/>
+  <text x="980" y="302" font-size="22" font-weight="800" fill="#9d174d" text-anchor="middle">画像判定</text>
+  <line x1="880" y1="316" x2="1080" y2="316" stroke="#f9a8d4" stroke-width="1.5"/>
+  <text x="980" y="340" font-size="16" fill="#6b7280" text-anchor="middle">1 枚のスクショを LLM で</text>
+  <text x="980" y="372" font-size="22" font-weight="700" fill="#ec4899" text-anchor="middle">数十秒</text>
+
+  <line x1="1140" y1="327" x2="1178" y2="327" stroke="#4c1d95" stroke-width="3" marker-end="url(#arr-uxaudit)"/>
+
+  <!-- Box 4: Journey judge (min) -->
+  <rect x="1180" y="262" width="320" height="130" rx="12" ry="12" fill="#F5F3FF" stroke="#8b5cf6" stroke-width="3.5"/>
+  <text x="1340" y="302" font-size="22" font-weight="800" fill="#4c1d95" text-anchor="middle">ジャーニー判定</text>
+  <line x1="1240" y1="316" x2="1440" y2="316" stroke="#c4b5fd" stroke-width="1.5"/>
+  <text x="1340" y="340" font-size="16" fill="#6b7280" text-anchor="middle">連続スクショを 4 軸で</text>
+  <text x="1340" y="372" font-size="22" font-weight="700" fill="#8b5cf6" text-anchor="middle">分</text>
+
+  <!-- Arrow down from pipeline -->
+  <line x1="800" y1="402" x2="800" y2="444" stroke="#4c1d95" stroke-width="3.5" marker-end="url(#arr-uxaudit)"/>
+
+  <!-- Bottom block: Synthesize -->
+  <rect x="400" y="454" width="800" height="90" rx="14" ry="14" fill="#F5F3FF" stroke="#8b5cf6" stroke-width="3"/>
+  <text x="800" y="492" font-size="26" font-weight="800" fill="#4c1d95" text-anchor="middle">原因でまとめて、提案を束ねる</text>
+  <text x="800" y="522" font-size="19" fill="#6d28d9" text-anchor="middle">重複を潰し、優先度付きの提案を <tspan font-weight="700">2〜3 個</tspan> に絞る</text>
+
+  <!-- Arrow down -->
+  <line x1="800" y1="550" x2="800" y2="594" stroke="#4c1d95" stroke-width="3.5" marker-end="url(#arr-uxaudit)"/>
+
+  <!-- Output: dashboard -->
+  <rect x="500" y="604" width="600" height="80" rx="14" ry="14" fill="#1A1A2E" stroke="#1A1A2E" stroke-width="2"/>
+  <text x="800" y="644" font-size="24" font-weight="800" fill="#ffffff" text-anchor="middle">dashboard.html</text>
+  <text x="800" y="672" font-size="18" fill="#c4b5fd" text-anchor="middle">UX issues ／ UI risks ／ 優先度付き提案</text>
+</svg>

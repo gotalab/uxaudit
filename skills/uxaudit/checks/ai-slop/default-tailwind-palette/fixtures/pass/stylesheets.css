@@ -1,0 +1,6 @@
+/* Project added at least one custom brand color */
+body { background: #ffffff; color: #111827; }
+.btn-primary { background: #ff6b35; color: #ffffff; }  /* custom brand orange */
+.btn-secondary { background: #6b7280; color: #ffffff; }
+.accent { color: #2d1b69; }  /* custom brand purple */
+.surface { background: #fdf6e3; border: 1px solid #e5e7eb; }  /* custom paper */

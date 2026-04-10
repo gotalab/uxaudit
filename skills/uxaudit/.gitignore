@@ -1,0 +1,52 @@
+# ─── OS ────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ─── Python ────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+.venv/
+venv/
+
+# ─── Node ──────────────────────────────────────────────────────────────
+# Skill is distributed with package.json + package-lock.json; consumers run
+# `npm install` themselves (or rely on plugin-mode's hooks/ensure-deps.sh,
+# which installs into $CLAUDE_PLUGIN_DATA/<plugin>/node_modules instead).
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.npm/
+
+# ─── Editors / IDEs ────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ─── Secrets / env ─────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ─── Logs ──────────────────────────────────────────────────────────────
+*.log
+
+# ─── uxaudit runtime artifacts ─────────────────────────────────────────
+# The orchestrator writes each run to `<target-repo>/.agents/uxaudit/<target>/`.
+# That normally lives in the *audited* project, not this skill bundle — but
+# if someone runs uxaudit against the skill's own README (or against cwd while
+# the skill is the cwd), the workspace would land here. Ignore it defensively
+# so no audit output ever slips into a skill commit.
+.agents/

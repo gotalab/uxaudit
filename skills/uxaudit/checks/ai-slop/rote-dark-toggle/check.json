@@ -1,0 +1,11 @@
+{
+  "id": "ai-slop/rote-dark-toggle",
+  "name": "No rote 'bg-white dark:bg-zinc-900' dark mode pairings",
+  "band": "ui-risk",
+  "method": "L1-script",
+  "severity": "minor",
+  "source": "NN/g 'AI Prototyping in Real Design Contexts' (nngroup.com/articles/ai-prototyping/)",
+  "description": "Detects the rote Tailwind dark-mode pattern where every surface element wears 'bg-white dark:bg-zinc-900' / 'bg-white dark:bg-gray-900' and every text element wears 'text-gray-900 dark:text-gray-100'. When 6+ such mechanical pairings appear, it's a strong tell the AI sprinkled dark-mode classes everywhere without designing a coherent dark theme.",
+  "rationale": "Real dark mode is more than inverting two colors per element. It requires thinking about elevation (surfaces should NOT all be the same dark gray), saturation (saturated brand colors get desaturated in dark), and contrast (gray-900 on gray-100 isn't always the right choice). When AI tools are asked to add dark mode, they sprinkle 'dark:bg-zinc-900' and 'dark:text-gray-100' on every element with no design thinking, and the result looks dark but feels like a recolored light theme. NN/g's 2024-25 AI Prototyping study documented this convergence on mechanical Tailwind pairings as part of the broader 'no distinctive visual language' finding. Rote class pairings are predictable patterns for theming.",
+  "pass_criteria": "Fewer than 6 mechanical 'bg-{light} dark:bg-{dark}' or 'text-{light} dark:text-{dark}' Tailwind utility pairings appear in the rendered HTML. (Even legitimate dark mode uses CSS custom properties or a small number of semantic class pairs, not the same rote pattern repeated dozens of times.)"
+}

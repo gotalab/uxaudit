@@ -1,0 +1,9 @@
+Welcome to our app
+
+Dashboard
+Settings
+Coming Soon: AI assistant
+Reports
+
+This feature is under construction.
+Status: TBD

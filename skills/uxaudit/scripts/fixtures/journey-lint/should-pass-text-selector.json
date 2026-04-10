@@ -1,0 +1,19 @@
+{
+  "id": "should-pass-text-selector",
+  "name": "text= selector with long content",
+  "goal": "Should NOT be flagged — text= selectors carry content, not IDs",
+  "starting_url": "http://localhost:3000",
+  "viewport": { "width": 1440, "height": 900 },
+  "viewport_only": false,
+  "steps": [
+    { "action": "click", "selector": "text=Slow Cooker Beef Stew with Root Vegetables",
+      "expect_change": { "kind": "navigation", "timeout_ms": 5000 } },
+    { "action": "screenshot", "name": "after" }
+  ],
+  "success_criteria": "lint should pass — text= selectors are exempt",
+  "context": "returning",
+  "_lint_expectation": {
+    "ok": true,
+    "static_lint_only": false
+  }
+}

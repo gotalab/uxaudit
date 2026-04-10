@@ -1,0 +1,12 @@
+{
+  "id": "accessibility/axe-core",
+  "name": "axe-core WCAG audit (no serious/critical violations)",
+  "band": "ux",
+  "subtype": "act",
+  "method": "L2-script",
+  "severity": "major",
+  "source": "Deque axe-core (90+ rules, each tagged to WCAG 2.1 A/AA Success Criteria)",
+  "description": "Runs axe-core 4.9.1 against the live page and reports violations grouped by impact. Fails if any serious or critical violation is present. axe-core implements rules tagged to the W3C WCAG 2.1 A/AA Success Criteria — color-contrast (1.4.3), image-alt (1.1.1), button-name (4.1.2), label (3.3.2), link-name (2.4.4), and ~85 others.",
+  "rationale": "axe-core is the industry-standard automated accessibility testing engine. Every rule is grounded in a specific WCAG Success Criterion and is conservatively tuned to avoid false positives. Catching axe violations is non-negotiable: it represents the floor of accessibility compliance and the violations are usually easy to fix once surfaced. Source: <https://github.com/dequelabs/axe-core> rule descriptions.",
+  "pass_criteria": "Zero violations of impact level 'serious' or 'critical' on the rendered page."
+}

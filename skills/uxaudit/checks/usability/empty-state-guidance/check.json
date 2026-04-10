@@ -1,0 +1,12 @@
+{
+  "id": "usability/empty-state-guidance",
+  "name": "Empty states guide the user forward",
+  "band": "ux",
+  "subtype": "decide",
+  "method": "L3-vision",
+  "severity": "major",
+  "source": "Nielsen #10 (Help and documentation) + NN/g 'Empty State UX: Best Practices' (Pernice 2019)",
+  "description": "A vision-LLM judges whether an empty state (a list with no items, a search with no results, a fresh dashboard) gives the user a clear next action, not just an icon and a sad sentence. NN/g calls empty states the most undervalued onboarding moment.",
+  "rationale": "NN/g's research on empty states shows that the empty state is the highest-leverage moment in the entire experience: it is the first thing a new user sees, and it is what the app shows whenever a user clears their data. A poor empty state ('No items yet') leaves the user stranded. A good one ('No reservations yet. Your guests will appear here once they book. Try the demo flow →') tells the user exactly what to do. Nielsen heuristic #10 (help and documentation) is most often violated here.",
+  "pass_criteria": "Every visible empty state includes: (a) a one-sentence explanation of what this area is FOR, (b) at least one concrete action the user can take RIGHT NOW (a button, a link, a 'try sample data' shortcut), and (c) NO sad ghosts, broken hearts, or 'oops, nothing here yet!' filler. If the page has no empty states (because data is present), the check passes by default."
+}

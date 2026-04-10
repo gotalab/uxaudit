@@ -1,0 +1,11 @@
+Linear — the issue tracker for modern software teams
+
+Plan, build, and ship products together.
+
+Features
+Kanban boards
+Sprint planning
+GitHub integration
+Keyboard shortcuts
+
+Sign up

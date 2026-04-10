@@ -1,0 +1,11 @@
+{
+  "id": "ai-slop/generic-font-stack",
+  "name": "No generic font stack (Inter / Roboto / Arial / system only)",
+  "band": "ui-risk",
+  "method": "L1-script",
+  "severity": "minor",
+  "source": "NN/g 'AI Prototyping in Real Design Contexts' (nngroup.com/articles/ai-prototyping/) + NN/g 'First Impressions: 50ms' (nngroup.com/articles/first-impressions-human-automaticity/)",
+  "description": "Detects when the page's body font-family stack consists entirely of overused fonts: Inter, Roboto, Arial, system-ui, -apple-system, BlinkMacSystemFont, sans-serif.",
+  "rationale": "NN/g's 2024-25 AI Prototyping study found AI tools 'share a similar, generic look' with 'sans-serif typeface, minimalist styling, flat and interchangeable appearance' because Inter and the system stack dominate the training data. Lindgaard's first-impressions research (50ms aesthetic judgment) and NN/g's recommendation of max ~2 fonts together justify treating the absence of a distinctive face as a measurable defect, not stylistic preference. Even loading a single distinctive font from Google Fonts demonstrates intent.",
+  "pass_criteria": "The body font-family stack must contain at least one font NOT in the canonical generic list (Inter, Roboto, Arial, Helvetica, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif, serif, monospace)."
+}

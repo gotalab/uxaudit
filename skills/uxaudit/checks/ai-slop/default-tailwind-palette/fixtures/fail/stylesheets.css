@@ -1,0 +1,10 @@
+/* Pure default Tailwind palette — no theme.extend.colors */
+body { background: #ffffff; color: #111827; }
+.btn { background: #3b82f6; color: #f9fafb; }
+.btn-secondary { background: #6b7280; color: #ffffff; }
+.surface { background: #f3f4f6; border: 1px solid #e5e7eb; }
+.text-muted { color: #9ca3af; }
+.accent { color: #1f2937; }
+.danger { color: #ef4444; }
+.success { color: #22c55e; }
+.warning { color: #f59e0b; }

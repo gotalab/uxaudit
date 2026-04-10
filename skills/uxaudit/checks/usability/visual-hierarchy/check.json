@@ -1,0 +1,12 @@
+{
+  "id": "usability/visual-hierarchy",
+  "name": "Clear visual hierarchy and primary CTA",
+  "band": "ux",
+  "subtype": "decide",
+  "method": "L3-vision",
+  "severity": "major",
+  "source": "Krug DMMT Ch3 'Billboard Design 101' + NN/g 'First Impressions: 50ms' (nngroup.com/articles/first-impressions-human-automaticity/)",
+  "description": "A vision-LLM judges whether the page has a single visually dominant primary action and a clear hierarchy among the major elements. Looks for: is the primary CTA the most prominent thing on screen? Are there competing primary buttons? Does the eye know where to land first?",
+  "rationale": "Steve Krug's Law #1 ('Don't make me think') and Ch 3 ('Billboard Design 101') argue that scanning depends on the page communicating its hierarchy in the first second. NN/g's first-impressions research (Lindgaard et al.) shows aesthetic and structural judgments form within 50ms of viewing, which means the primary action must be visually dominant or it's invisible. If two or more elements compete for dominance, the user pauses to decide, and that pause is exactly the 'making me think' Krug warned against. This check requires visual judgment and so cannot run from a script.",
+  "pass_criteria": "The page presents one visually dominant primary action that is unambiguously the most attention-getting interactive element. Secondary actions are visually subordinate. The viewer's eye lands on the primary action within 1 to 2 seconds of looking at the screenshot."
+}

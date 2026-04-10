@@ -1,0 +1,5 @@
+Recent users:
+- Alice Smith (registered yesterday)
+- Bob Jones (signed up today)
+- Charlie Williams (last login 2 days ago)
+- Eve Brown (admin role)

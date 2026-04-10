@@ -1,0 +1,264 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:gotalab:uxaudit:schemas:check-result",
+  "title": "uxaudit check result",
+  "description": "Schema for the result.json that every check (L1/L2/L3/L4) writes after running. result.json is verdict-shaped: it carries only the dynamic fields (check_id + result + evidence + suggestion + optional check-specific extensions). Catalog metadata (name, band, subtype, method, severity, source, rationale, pass_criteria) is joined in by aggregate.py from check.json after the run, and `category` is derived from the first segment of check_id by the same join, so the same string is never duplicated across iterations. validate_results.py walks every iteration-N/checks/<check>/result.json and validates against this schema BEFORE aggregation, which is why catalog fields are not required here.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "check_id",
+    "result",
+    "evidence"
+  ],
+  "properties": {
+    "check_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*\\/[a-z][a-z0-9-]*$",
+      "description": "Stable check identifier in '<category>/<name>' form. Must match the originating check.json id field and the on-disk directory name."
+    },
+    "result": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail",
+        "skipped",
+        "error",
+        "unverifiable"
+      ],
+      "description": "The verdict. 'pass' = the app passed. 'fail' = the app failed (a real product issue). 'skipped' = the check didn't run (L3/L4 not dispatched, required input missing — neutral, doesn't reflect on the app). 'error' = the check tried to run but crashed. 'unverifiable' = the check ran but the audit pipeline could not collect enough evidence to commit to pass or fail (e.g., L4 capture broke at a Compiler-selector mismatch). 'unverifiable' is treated as audit-pipeline information, not app information: the dashboard counts it separately, excludes it from pass-rate denominators, and surfaces it under 'audit integrity' so the reader can tell capture-incomplete results from real failures."
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["details"],
+      "properties": {
+        "details": {
+          "type": "string",
+          "description": "Plain-language explanation of what was scanned/observed and why the verdict is what it is. Shown verbatim in the dashboard."
+        },
+        "matches": {
+          "type": "array",
+          "description": "Specific data points the check found. Each match is a free-form object whose shape is check-specific. Common fields: {type, matched_text} for ai-slop/usability scanners; {id, impact, description, helpUrl, nodes} for axe-core; {pattern, context} for text scanners. The validator only enforces that each item is a non-null object — the shape is left to each check to choose because mandating a single envelope would force breaking changes across the catalog.",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "files": {
+          "type": "array",
+          "description": "Relative paths (under evidence_dir) of supporting artifacts the check produced — screenshots, diff files, JSON dumps, etc.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "suggestion": {
+      "type": "string",
+      "description": "Actionable fix shown to the developer. Plain language. Required when result == 'fail'."
+    },
+    "ignored": {
+      "type": "boolean",
+      "description": "Set by aggregate.py when this check matches a pattern in .uxauditignore. The dashboard renders ignored checks separately and excludes them from pass-rate denominators."
+    },
+    "result_after_reconciliation": {
+      "type": "string",
+      "enum": ["pass", "fail", "skipped", "error"],
+      "description": "Set by the Reconciler when it overrides a catalog FAIL based on the project's declared design system. The original `result` is preserved so the dashboard can show the override chain."
+    },
+    "reconciliation_note": {
+      "type": "string",
+      "description": "Free-text rationale the Reconciler wrote when it overrode the verdict. Required when result_after_reconciliation is set."
+    },
+    "reconciled_at": {
+      "type": "string",
+      "description": "ISO timestamp from the Reconciler. Set together with result_after_reconciliation."
+    },
+    "journey_evaluation": {
+      "type": "object",
+      "description": "L4 journey-only sub-verdict block. The L4 Judge for `core-experience/primary-journey` (and any future L4-journey check) writes this structure to expose four independent UX axes mapped to ISO 9241-11 (Effectiveness / Efficiency / Satisfaction proxy) plus Norman's gulf of evaluation. The top-level `result` field on the same object is a rollup of the four sub-verdicts using rule A: any sub-verdict of 'fail' rolls up to a top-level 'fail'. Other check methods (L1/L2/L3) do not populate this block. See `references/subagents/judge-output-format.md` for the rollup contract and `references/concepts/discovery-and-scope.md` Part 0 for the framing.",
+      "additionalProperties": false,
+      "required": ["value_delivery", "task_completion", "operating_cost", "feedback_quality"],
+      "properties": {
+        "value_delivery": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verdict", "evidence"],
+          "description": "Effectiveness axis #1 — JTBD value. Did the user actually receive the value the journey was about (the job's first_value, validated against the journey's first_value_signals)? Distinct from task_completion: a flow can complete procedurally while delivering no value (e.g., reach checkout success page but cart was emptied silently), and a flow can deliver value without completing procedurally (e.g., user finds the recipe they wanted in the search results without ever opening the detail page).",
+          "properties": {
+            "verdict": {
+              "type": "string",
+              "enum": ["pass", "fail", "skipped", "unverifiable"]
+            },
+            "evidence": {
+              "type": "string",
+              "minLength": 12,
+              "description": "1–3 sentences of plain language explaining what was observed. When fail, name the specific signals that were missing or contradicted."
+            }
+          }
+        },
+        "task_completion": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verdict", "evidence"],
+          "description": "Effectiveness axis #2 — procedural completion. Did the journey reach the success_state declared in the contract's success_criteria? This is the closest thing to a deterministic verdict (URL or DOM check), but in SPA / hash routing / modal-based flows the Judge still needs context to decide whether the visible state represents success.",
+          "properties": {
+            "verdict": {
+              "type": "string",
+              "enum": ["pass", "fail", "skipped", "unverifiable"]
+            },
+            "evidence": {
+              "type": "string",
+              "minLength": 12
+            }
+          }
+        },
+        "operating_cost": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verdict", "evidence", "actual_steps"],
+          "description": "Efficiency axis — process cost with intentional/unintentional excise attribution. The Judge counts the total steps it took to complete the journey, matches each step against the contract's intentional_friction (Cooper's idiom-required friction: shoulder-surf guards, irreversibility guards, etc.), and classifies the unmatched excess as unintentional excise. A high actual_steps with most accounted for as intentional_friction is OK; a moderate actual_steps with 5 unintentional excess steps is a real fail.",
+          "properties": {
+            "verdict": {
+              "type": "string",
+              "enum": ["pass", "fail", "skipped", "unverifiable"]
+            },
+            "evidence": {
+              "type": "string",
+              "minLength": 12
+            },
+            "actual_steps": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total user-meaningful steps the Judge took to traverse the journey. Counts clicks, form submissions, navigations, modal acknowledgments — anything the user must do. Does not count automatic transitions or system-driven redirects."
+            },
+            "intentional_steps": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Count of actual_steps that matched a contract intentional_friction entry. These are NOT counted against operating_cost."
+            },
+            "unintentional_excess": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Count of actual_steps that the Judge could not justify as either core flow or intentional_friction. This is the number that drives the verdict — high unintentional_excess means the app makes users do busywork."
+            },
+            "excise_attribution": {
+              "type": "array",
+              "description": "Per-step classification of why the step exists. Captures both intentional friction (matched against the contract) and unintentional excise (with the Judge's reason for flagging it). Allows the dashboard to show which specific steps to remove vs which to keep.",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["step", "kind", "rationale"],
+                "properties": {
+                  "step": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "1-indexed step number, aligned with the waypoint screenshots in evidence.files."
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": ["intentional", "unintentional"]
+                  },
+                  "rationale": {
+                    "type": "string",
+                    "minLength": 8,
+                    "description": "Short reason. For 'intentional', cite the matching contract entry. For 'unintentional', name what the step did and why it wasn't core flow (e.g., 'Newsletter signup interstitial blocked the flow with no clear dismiss')."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "feedback_quality": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verdict", "evidence"],
+          "description": "Satisfaction proxy axis — Norman's gulf of evaluation, Cooper's recoverability, Nielsen #1 (visibility of system status) and #9 (help users recognize, diagnose, and recover from errors). Did each step communicate what was happening? At success, did the user get a clear confirmation of what they just did? When the Judge made a wrong choice mid-flow, could it recover? This axis is fully Judge-evaluated — there is no contract field for it because it depends on what the app actually shows in real time.",
+          "properties": {
+            "verdict": {
+              "type": "string",
+              "enum": ["pass", "fail", "skipped", "unverifiable"]
+            },
+            "evidence": {
+              "type": "string",
+              "minLength": 12
+            }
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"result": {"const": "fail"}}
+      },
+      "then": {
+        "required": ["suggestion"],
+        "properties": {
+          "suggestion": {"minLength": 8}
+        }
+      }
+    },
+    {
+      "$comment": "Rollup invariant — Rule A: when journey_evaluation is present and any of its four sub-verdicts is 'fail', the top-level result MUST also be 'fail'. This enforces rule A from the L4 contract — it is structurally impossible to claim a passing journey while one of the four UX axes failed. The Judge writes both fields and validate_results.py will reject any inconsistency.",
+      "if": {
+        "required": ["journey_evaluation"],
+        "properties": {
+          "journey_evaluation": {
+            "anyOf": [
+              {"properties": {"value_delivery":   {"properties": {"verdict": {"const": "fail"}}, "required": ["verdict"]}}},
+              {"properties": {"task_completion":  {"properties": {"verdict": {"const": "fail"}}, "required": ["verdict"]}}},
+              {"properties": {"operating_cost":   {"properties": {"verdict": {"const": "fail"}}, "required": ["verdict"]}}},
+              {"properties": {"feedback_quality": {"properties": {"verdict": {"const": "fail"}}, "required": ["verdict"]}}}
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {"const": "fail"}
+        }
+      }
+    },
+    {
+      "$comment": "Rollup invariant — Rule B: when journey_evaluation is present, NO sub-verdict is 'fail', AND at least one sub-verdict is 'unverifiable', the top-level result MUST NOT be 'pass'. The audit pipeline did not gather enough evidence to commit to a clean pass; claiming pass would lie about what we verified. Set top-level result to 'unverifiable' instead. (validate_results.py also enforces this in Python with a clearer error message.)",
+      "if": {
+        "required": ["journey_evaluation"],
+        "allOf": [
+          {
+            "not": {
+              "properties": {
+                "journey_evaluation": {
+                  "anyOf": [
+                    {"properties": {"value_delivery":   {"properties": {"verdict": {"const": "fail"}}, "required": ["verdict"]}}},
+                    {"properties": {"task_completion":  {"properties": {"verdict": {"const": "fail"}}, "required": ["verdict"]}}},
+                    {"properties": {"operating_cost":   {"properties": {"verdict": {"const": "fail"}}, "required": ["verdict"]}}},
+                    {"properties": {"feedback_quality": {"properties": {"verdict": {"const": "fail"}}, "required": ["verdict"]}}}
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "journey_evaluation": {
+                "anyOf": [
+                  {"properties": {"value_delivery":   {"properties": {"verdict": {"const": "unverifiable"}}, "required": ["verdict"]}}},
+                  {"properties": {"task_completion":  {"properties": {"verdict": {"const": "unverifiable"}}, "required": ["verdict"]}}},
+                  {"properties": {"operating_cost":   {"properties": {"verdict": {"const": "unverifiable"}}, "required": ["verdict"]}}},
+                  {"properties": {"feedback_quality": {"properties": {"verdict": {"const": "unverifiable"}}, "required": ["verdict"]}}}
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "then": {
+        "properties": {
+          "result": {"not": {"const": "pass"}}
+        }
+      }
+    }
+  ]
+}

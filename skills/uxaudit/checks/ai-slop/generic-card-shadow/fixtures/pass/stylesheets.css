@@ -1,0 +1,6 @@
+/* Custom shadow tuned to a paper background — not the Tailwind default */
+.card {
+  box-shadow: 0 2px 12px -2px rgba(45, 27, 105, 0.18);
+  background: #fdf6e3;
+  border: 1px solid #2d1b6915;
+}

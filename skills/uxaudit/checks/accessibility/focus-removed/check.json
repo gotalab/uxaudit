@@ -1,0 +1,12 @@
+{
+  "id": "accessibility/focus-removed",
+  "name": "Focus indicator not removed without replacement",
+  "band": "ux",
+  "subtype": "act",
+  "method": "L1-script",
+  "severity": "major",
+  "source": "WCAG 2.4.7 Focus Visible (AA) + /rams Serious tier",
+  "description": "Detects CSS that removes the default browser focus indicator (outline: none, outline: 0) without providing a visible :focus or :focus-visible replacement on the same selector. Keyboard users rely on the focus ring to know where they are.",
+  "rationale": "WCAG 2.1 Success Criterion 2.4.7 (Focus Visible, Level AA): 'Any keyboard operable user interface has a mode of operation where the keyboard focus indicator is visible.' The /rams design review command ranks 'outline: none without replacement' as a Serious accessibility issue. Removing the focus ring without a replacement makes the page un-keyboard-navigable for sighted users — a complete blocker for many people. This check is conservative: it only fires if outline:none/0 appears AND no :focus / :focus-visible / :focus-within rule is defined nearby for the same context.",
+  "pass_criteria": "Either no outline:none / outline:0 declarations exist, OR every outline-removing rule has a corresponding :focus / :focus-visible rule with a visible indicator (border, box-shadow, outline of another color)."
+}

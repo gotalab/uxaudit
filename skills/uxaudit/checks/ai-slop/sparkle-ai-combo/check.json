@@ -1,0 +1,11 @@
+{
+  "id": "ai-slop/sparkle-ai-combo",
+  "name": "No sparkle + AI keyword combo",
+  "band": "ui-risk",
+  "method": "L1-script",
+  "severity": "major",
+  "source": "NN/g 'Icon Usability' (https://www.nngroup.com/articles/icon-usability/)",
+  "description": "Detects the universal AI-product fingerprint: a ✨ (sparkles) emoji placed next to AI-related keywords like 'AI', 'magic', 'smart', 'generate', 'assistant', 'powered'. The combination is so specific to GPT-generated landing pages that a single occurrence is evidence. Unlike the emoji-as-icon check (which uses a 3+ threshold for section headers), this check fires at count 1 because the sparkle+AI co-location is not an aesthetic choice, it's a reflex. Implementation: scans visible-text.txt for a sparkle character within 40 characters of any AI keyword (case-insensitive).",
+  "rationale": "✨ is the single most overused glyph in LLM-generated UI: Vercel v0, Bolt, Cursor, GitHub Copilot, ChatGPT all ship UIs with ✨ attached to anything touching AI. When you see '✨ AI-powered' or 'Generate ✨' in a real product, it means the designer reached for the highest-probability 'indicate AI feature' token instead of committing to a brand mark, a custom icon, or an icon-system glyph. Because this specific combo is rare in non-AI products and near-universal in slop-generated AI products, even a single occurrence is a high-confidence fingerprint with no threshold needed. NN/g warns that decorative icons (which ✨ is in this context, since it carries no extra meaning) add visual noise without communicative value.",
+  "pass_criteria": "No instance of the ✨ character (U+2728) within 40 characters of any AI-related keyword (AI, artificial intelligence, magic, smart, generate, generated, assistant, powered, agentic, auto, intelligence) in the rendered visible text."
+}

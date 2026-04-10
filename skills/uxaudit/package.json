@@ -1,0 +1,12 @@
+{
+  "name": "uxaudit",
+  "version": "0.1.0",
+  "description": "UX regression testing for apps: finds the usability, recovery, and interface-quality regressions correctness checks miss.",
+  "type": "module",
+  "private": true,
+  "license": "Apache-2.0",
+  "dependencies": {
+    "axe-core": "4.9.1",
+    "playwright": "1.58.2"
+  }
+}

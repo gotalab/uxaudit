@@ -1,0 +1,11 @@
+{
+  "id": "desirability/aesthetic-first-impression",
+  "name": "Aesthetic first impression (50ms test)",
+  "band": "ui-risk",
+  "method": "L3-vision",
+  "severity": "major",
+  "source": "Lindgaard et al. 2006 'Attention web designers: You have 50 milliseconds' (Behaviour & Information Technology) + NN/g 'First Impressions: 50ms' (nngroup.com/articles/first-impressions-human-automaticity/)",
+  "description": "A vision-LLM judges whether the page makes a strong, intentional aesthetic first impression, the kind that takes 50ms for a human to form. Looks for: confident composition, restrained palette, deliberate typography, considered whitespace. Fails if the page reads as templated, default, or assembled-from-parts.",
+  "rationale": "Lindgaard's 2006 study showed users form aesthetic judgments in 50ms (faster than conscious thought) and these judgments persist as overall quality assessments (the aesthetic-usability effect). NN/g's summary of this research establishes the empirical basis: first impressions form before any content is read, and they set the credibility ceiling for the entire session. If the first impression is weak, no amount of feature completeness recovers it because users have already decided whether they want to use it. This check is the most direct measurement of 使いたい (desirability).",
+  "pass_criteria": "Within the first second of looking at the screenshot, the page communicates a coherent visual identity: a deliberate palette (not stock), considered typography (not system defaults), and confident composition (not centered-everything). A neutral observer would say 'this looks like someone cared about how it looks.' Fails if it reads as a wireframe, template, or generic dashboard."
+}

@@ -1,0 +1,12 @@
+{
+  "id": "ai-slop/default-tagline",
+  "name": "No default LLM-cliché tagline",
+  "band": "ux",
+  "subtype": "understand",
+  "method": "L1-script",
+  "severity": "minor",
+  "source": "Krug DMMT Law #3 ('cut half the words') + NN/g 'Microcontent: How to Write Headlines, Page Titles, and Subject Lines' (Nielsen 1998)",
+  "description": "Detects user-visible headings matching the default LLM landing-page tagline patterns: 'Build [X] in minutes', 'The future of [Y]', '[X] for the modern web', '[X], reimagined', 'Beautiful [X], simple [Y]', etc.",
+  "rationale": "These taglines appear in nearly every LLM-generated landing page because they're the highest-probability completions of 'write a tagline for a SaaS app'. Taglines are the textual form of cookie-cutter design: a real product names a real differentiator, not a generic value prop. NN/g's microcontent research (Nielsen 1998) established that users decide whether to engage based on the first 6 words of a heading, which means a generic heading says nothing in the exact place it matters most. Krug's Law #3 (cut half the words) applies double to noise that says nothing.",
+  "pass_criteria": "No h1/h2 element matches the default tagline patterns: 'build * in minutes', 'the future of *', '* for the modern web', '* reimagined', 'beautiful *, simple *', 'powerful * for *', 'next-generation *', 'AI-powered *' (in headings)."
+}

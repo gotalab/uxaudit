@@ -1,0 +1,12 @@
+{
+  "id": "usability/system-status-visibility",
+  "name": "System status is visible (Nielsen #1)",
+  "band": "ux",
+  "subtype": "recover",
+  "method": "L3-vision",
+  "severity": "major",
+  "source": "Nielsen Heuristic #1 (Visibility of system status) + NN/g 'Response Times: The 3 Important Limits' (Nielsen 1993)",
+  "description": "A vision-LLM judges whether the page communicates what the system is currently doing (loading, saving, in-progress operations, success or error confirmations) or whether the user is left wondering if anything happened after they clicked.",
+  "rationale": "Nielsen's first usability heuristic ('visibility of system status') is the most violated heuristic in modern AI-generated UIs because LLMs forget about loading and async states. NN/g's 1993 response-time research showed that 0.1s feels instant, 1s keeps flow, and 10s loses attention. Crossing those thresholds without feedback breaks trust. A page that doesn't show 'Saving...', 'Sending...', or 'Loaded 14 of 23' loses the user's trust on the very first slow action. This check looks for any visible status affordances on the rendered page.",
+  "pass_criteria": "The page shows at least one visible status affordance: a count ('14 of 23 items'), a loading indicator, a save status ('Last saved 2 min ago'), a connection indicator, a success / error toast slot, or a clear in-progress treatment for any async operation. The user should be able to look at the page and answer 'is the system busy or idle?' without clicking anything."
+}

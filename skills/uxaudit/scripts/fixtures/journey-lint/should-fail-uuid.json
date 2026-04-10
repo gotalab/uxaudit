@@ -1,0 +1,19 @@
+{
+  "id": "should-fail-uuid",
+  "name": "Hardcoded UUID v4 in data attribute",
+  "goal": "Should be flagged by hardcoded-dynamic-id static lint",
+  "starting_url": "http://localhost:3000",
+  "viewport": { "width": 1440, "height": 900 },
+  "viewport_only": false,
+  "steps": [
+    { "action": "click", "selector": "[data-recipe-id='550e8400-e29b-41d4-a716-446655440000']" },
+    { "action": "screenshot", "name": "after" }
+  ],
+  "success_criteria": "lint should reject this file",
+  "context": "returning",
+  "_lint_expectation": {
+    "ok": false,
+    "static_lint_only": true,
+    "first_failing_lint_kind": "hardcoded-dynamic-id"
+  }
+}

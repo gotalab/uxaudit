@@ -1,0 +1,366 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "uxaudit project context",
+  "description": "Schema for the Scout-produced project-context.json file. This captures the product's declared purpose, discovered journeys, and lightweight experience model so downstream evaluation can stay project-shaped without exposing the full spec to Judges.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "purpose",
+    "target_audience",
+    "design_system",
+    "category",
+    "primary_journeys",
+    "experience_model",
+    "discovery_notes"
+  ],
+  "properties": {
+    "project_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target_audience": {
+      "type": "string",
+      "minLength": 1
+    },
+    "primary_viewport": {
+      "type": "string",
+      "enum": ["mobile-sm", "mobile", "tablet", "tablet-pro", "desktop", "desktop-lg"]
+    },
+    "viewport_reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "native_platform_warning": {
+      "type": ["string", "null"]
+    },
+    "design_system": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "colors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "value"],
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "value": { "type": "string", "minLength": 1 },
+              "role": { "type": "string" }
+            }
+          }
+        },
+        "fonts": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              { "type": "string", "minLength": 1 },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name"],
+                "properties": {
+                  "name": { "type": "string", "minLength": 1 },
+                  "role": { "type": "string" }
+                }
+              }
+            ]
+          }
+        },
+        "spacing_unit": {
+          "type": ["string", "number", "integer"]
+        },
+        "border_radius": {
+          "type": ["string", "number", "integer"]
+        },
+        "discovered_from": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "category": {
+      "type": "string",
+      "minLength": 1
+    },
+    "primary_journeys": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "goal",
+          "starting_url",
+          "steps_hint",
+          "success_criteria",
+          "context",
+          "derived_from"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "goal": {
+            "type": "string",
+            "minLength": 1
+          },
+          "starting_url": {
+            "type": "string",
+            "minLength": 1
+          },
+          "steps_hint": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "success_criteria": {
+            "type": "string",
+            "minLength": 1
+          },
+          "context": {
+            "type": "string",
+            "enum": ["cold-start", "returning", "power-user"]
+          },
+          "derived_from": {
+            "type": "string",
+            "minLength": 1
+          },
+          "confidence": {
+            "type": "string",
+            "enum": ["high", "medium", "low"],
+            "description": "How much trust this journey hypothesis can carry. `high` = the journey is backed by something the team actively maintains (e.g., an e2e test running in CI, a recent scenario doc the team references). `medium` = synthesized from routes or README structure — declared intent, but not actively validated. `low` = adapted from a category baseline or derived from JTBD inference. The downstream pipeline weights fails by this value: a fail on a low-confidence journey is information about the hypothesis as much as about the product. Optional but strongly recommended — when absent, the downstream treats the journey as `medium`."
+          },
+          "first_value_signals": {
+            "type": "array",
+            "description": "Concrete observable indicators that the journey's first_value (declared on the linked job in experience_model.jobs) was actually delivered. The L4 Judge uses these signals to evaluate the `value_delivery` axis of journey_evaluation: it operates the journey, then checks the final state for these specific signals. Example for a recipe app's 'find a recipe' journey: ['Recipe detail page rendered with ingredients list', 'Cook time visible at the top of the page', 'No empty-state placeholder where recipe content should be']. Optional — when absent, the Judge falls back to interpreting the job-level first_value string directly.",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "intentional_friction": {
+            "type": "array",
+            "description": "Steps the design team purposely added that LOOK like excise but are actually required friction (Cooper's idiom-required friction): irreversibility guards, shoulder-surf guards, payment confirmations, trust-building steps. The L4 Judge uses this list to evaluate the `operating_cost` axis: it counts actual_steps, matches each against `matches` semantically, and classifies the unmatched excess as unintentional excise. Without this list, every step beyond the minimum looks like a fail; with it, the Judge can correctly say 'this 11-step journey is fine because 3 of the steps are declared trust-building moments'.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["matches", "rationale"],
+              "properties": {
+                "matches": {
+                  "type": "string",
+                  "minLength": 8,
+                  "description": "Plain-language description of the step the Judge should match against. Natural language because the Judge does semantic matching against what it observes — e.g., 'type DELETE to confirm' will match a confirmation modal regardless of the exact button label or flow position. Step numbers are deliberately NOT used because they shift between iterations."
+                },
+                "rationale": {
+                  "type": "string",
+                  "minLength": 12,
+                  "description": "Why this friction is justified. e.g., 'Account deletion is irreversible — prevent accidental click' or 'Re-enter password before payment to prevent unauthorized transactions on an unattended device'. Becomes the `rationale` field in the Judge's excise_attribution output when this entry matches a step."
+                }
+              }
+            }
+          },
+          "job_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]*$"
+            }
+          },
+          "next_journey": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "previous_journey": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          }
+        }
+      }
+    },
+    "experience_model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["jobs", "open_questions"],
+      "properties": {
+        "jobs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "name",
+              "priority",
+              "actor",
+              "outcome",
+              "contexts",
+              "first_value",
+              "must_understand",
+              "key_decisions",
+              "decisions_to_default",
+              "progress_signals",
+              "recovery_points",
+              "simplicity_rules",
+              "evidence_basis"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]*$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "priority": {
+                "type": "string",
+                "enum": ["high", "medium", "low"]
+              },
+              "actor": {
+                "type": "string",
+                "minLength": 1
+              },
+              "outcome": {
+                "type": "string",
+                "minLength": 1
+              },
+              "contexts": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "enum": ["cold-start", "returning", "power-user"]
+                }
+              },
+              "first_value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "must_understand": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "key_decisions": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "decisions_to_default": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "progress_signals": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "recovery_points": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "simplicity_rules": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "evidence_basis": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["source", "kind", "confidence"],
+                  "properties": {
+                    "source": { "type": "string", "minLength": 1 },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "e2e",
+                        "scenario-doc",
+                        "route",
+                        "readme",
+                        "category-baseline",
+                        "jtbd",
+                        "external-research"
+                      ]
+                    },
+                    "confidence": {
+                      "type": "string",
+                      "enum": ["high", "medium", "low"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "open_questions": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "journey_chains": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "items": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        }
+      }
+    },
+    "discovery_sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "path"],
+        "properties": {
+          "kind": { "type": "string", "minLength": 1 },
+          "path": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "discovery_notes": {
+      "type": "string",
+      "minLength": 1
+    },
+    "audit_policy": {
+      "type": "object",
+      "description": "Tells the Journey Compiler which categories of side-effectful actions it is allowed to actually exercise. Defaults: allow_llm_spend=true, allow_payment=false, allow_destructive_delete=false. The Compiler reads this block before translating any click that spends money, creates irreversible state, or calls a paid LLM API. See agents/uxaudit-journey-compiler.md § audit_policy.",
+      "additionalProperties": false,
+      "properties": {
+        "allow_llm_spend": {
+          "type": "boolean",
+          "description": "When true (the default), the Compiler clicks Generate/Submit on LLM-API-spending steps normally. When false, the Compiler fills the form and records the step in non_fakeable_skips."
+        },
+        "allow_payment": {
+          "type": "boolean",
+          "description": "When true, the Compiler clicks through real-money checkout. Default is false — only set true when the project uses a test-mode payment provider (Stripe test keys, PayPal sandbox)."
+        },
+        "allow_destructive_delete": {
+          "type": "boolean",
+          "description": "When true, the Compiler clicks Delete Account / Drop Table / Revoke Key. Default is false — only set true when the project has a reliable reset mechanism between runs."
+        },
+        "rate_limit_tokens": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Soft cap on total LLM tokens spent across all journeys in a single audit run."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Short explanation of any non-default value."
+        }
+      }
+    }
+  }
+}

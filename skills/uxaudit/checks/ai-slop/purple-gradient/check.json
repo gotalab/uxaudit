@@ -1,0 +1,11 @@
+{
+  "id": "ai-slop/purple-gradient",
+  "name": "No default purple/violet/indigo gradient",
+  "band": "ui-risk",
+  "method": "L1-script",
+  "severity": "minor",
+  "source": "NN/g 'AI Prototyping in Real Design Contexts' (nngroup.com/articles/ai-prototyping/)",
+  "description": "Detects the default purple/violet/indigo/pink gradients that LLMs converge on when no design language is specified: Tailwind from-purple-500, from-indigo-500, the Stripe-era #667eea to #764ba2, and similar.",
+  "rationale": "NN/g's 2024-25 AI Prototyping research found that AI tools (Bolt, v0, Lovable, Claude, Figma Make, Stitch, UX Pilot, Replit) all converge on Tailwind+shadcn defaults producing 'a similar, generic look.' The default indigo/purple gradient is the canonical example, popularized as the Tailwind UI default and now reproduced across essentially every vibe-coded landing page. A deliberate purple is fine. The LLM defaults to it because it's the most likely token, not because it fits the brand. A real product picks a brand color, not the statistical average.",
+  "pass_criteria": "No linear-gradient() declarations or Tailwind utility classes (from-purple-*, via-purple-*, to-pink-*, etc.) involving the canonical purple/violet/indigo Tailwind palette or the Stripe-era #667eea/#764ba2 hex codes."
+}

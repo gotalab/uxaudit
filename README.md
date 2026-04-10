@@ -4,6 +4,9 @@
 
 > **A [Claude Code](https://code.claude.com) plugin for UX regression testing — evaluates whether people can understand, decide, act, and recover across real user journeys.**
 
+> [!WARNING]
+> **Status: Experimental.** UX Audit is still evolving, and interfaces, outputs, checks, and workflows may change without notice.
+
 1. **Reads your project** — code, routes, docs, tests — and auto-generates journey scenarios specific to your product (typically 5–8+)
 2. **Walks each journey** on the live app — can someone sign up, reach first value, recover when things go wrong?
 3. **Runs ~40 additional checks** across AI-slop, accessibility, usability, core experience, and desirability
@@ -36,7 +39,7 @@ Quick catalog-only check (skip journey evaluation):
 - **Claude Code** — first-class. Installed as a plugin, invoked as `/uxaudit:uxaudit`.
 - **Codex and other coding-agent hosts** — not yet supported. The `skills/uxaudit/` bundle is being designed to be portable, and broader host support is on the roadmap.
 
-**Maturity:** alpha. Catalog checks, capture pipeline, dashboard, and history/compare views are used today; richer `decide` / `recover` evaluation and tighter host portability are still being built out. A full audit (catalog + journey evaluation) typically takes **30–60 minutes** in Claude Code; Max plan is recommended for regular use.
+**Maturity:** experimental. Catalog checks, capture pipeline, dashboard, and history/compare views are used today; richer `decide` / `recover` evaluation and tighter host portability are still being built out. A full audit (catalog + journey evaluation) typically takes **30–60 minutes** in Claude Code; Max plan is recommended for regular use.
 
 ---
 

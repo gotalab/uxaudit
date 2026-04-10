@@ -4,6 +4,9 @@
 
 > **[Claude Code](https://code.claude.com) 向けの UX regression testing plugin。人が理解し、判断し、行動し、回復できるかを、実際の user journey を通して評価する。**
 
+> [!WARNING]
+> **Status: Experimental.** UX Audit はまだ発展途中で、interface、output、check、workflow は予告なく変わる可能性があります。
+
 1. **プロジェクトを読む** — コード、ルート定義、ドキュメント、テストから、そのプロダクト固有の journey シナリオを自動生成（通常 5〜8 以上）
 2. **各 journey を実際に歩く** — sign up できるか、first value に到達できるか、問題時に回復できるか
 3. **約 40 の追加 check を実行** — AI-slop / accessibility / usability / core experience / desirability
@@ -36,7 +39,7 @@ catalog check のみのクイック実行（journey 評価を skip）:
 - **Claude Code** — first-class。plugin として install し、`/uxaudit:uxaudit` で呼び出す。
 - **Codex などその他の coding-agent host** — 現在未対応。`skills/uxaudit/` bundle は portable に設計されており、他ホスト対応は roadmap にある。
 
-**成熟度:** alpha。catalog check / capture pipeline / dashboard / history / compare view は実運用されているが、より深い `decide` / `recover` 評価や host portability はまだ整備中。full audit（catalog + journey 評価）は Claude Code で **30–60 分** が目安。継続利用には Max plan 推奨。
+**成熟度:** experimental。catalog check / capture pipeline / dashboard / history / compare view は実運用されているが、より深い `decide` / `recover` 評価や host portability はまだ整備中。full audit（catalog + journey 評価）は Claude Code で **30–60 分** が目安。継続利用には Max plan 推奨。
 
 ---
 

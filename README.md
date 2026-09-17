@@ -140,7 +140,7 @@ From inside an active Claude Code session:
 /reload-plugins
 ```
 
-On first use, the plugin installs Playwright Chromium if needed. Verify it loaded with `/plugin`. The skill is invoked as `/uxaudit:uxaudit`.
+On first use, the plugin installs its pinned Node dependencies (Playwright and axe-core), and Playwright Chromium if needed. Verify it loaded with `/plugin`. The skill is invoked as `/uxaudit:uxaudit`.
 
 ## Quick start (once the plugin is installed)
 

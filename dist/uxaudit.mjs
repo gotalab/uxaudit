@@ -7369,7 +7369,7 @@ var require_dist = __commonJS({
 
 // src/cli.ts
 import { spawnSync } from "node:child_process";
-import { chmodSync, existsSync as existsSync4, mkdirSync as mkdirSync2, mkdtempSync, readFileSync as readFileSync4, readdirSync as readdirSync2, rmSync as rmSync2, statSync, writeFileSync as writeFileSync3 } from "node:fs";
+import { chmodSync, existsSync as existsSync4, mkdirSync as mkdirSync2, mkdtempSync, readFileSync as readFileSync4, readdirSync as readdirSync2, rmSync, statSync, writeFileSync as writeFileSync3 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join as join7, relative, resolve } from "node:path";
 import { parseArgs } from "node:util";
@@ -7532,7 +7532,7 @@ function sameOrigin(path, base) {
 
 // src/capture.ts
 import { createHash } from "node:crypto";
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { join as join4 } from "node:path";
 
 // src/env.ts
@@ -7563,67 +7563,44 @@ function envRefs(value) {
 }
 
 // src/overlay.ts
-var ID = "__uxaudit_overlay";
-var SCREENSHOT_STYLE = `#${ID}{display:none!important}`;
-var ANNOTATE_MS = 450;
-async function annotate(page, index, label, target, from) {
-  let box = null;
-  if (target) {
-    try {
-      await target.scrollIntoViewIfNeeded({ timeout: 2e3 });
-      box = await target.boundingBox({ timeout: 1e3 });
-    } catch {
-      box = null;
-    }
+var esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+var CAPTION_STYLE = "position:fixed;bottom:12px;left:12px;max-width:60%;padding:6px 12px;border-radius:6px;background:rgba(15,23,42,.85);color:#fff;font:600 16px/1.35 system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
+var Narration = class {
+  constructor(page) {
+    this.page = page;
   }
-  await page.evaluate(
-    ({ id, text, box: box2, from: from2 }) => {
-      document.getElementById(id)?.remove();
-      const root = document.createElement("div");
-      root.id = id;
-      root.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:2147483647;font:600 16px/1.35 system-ui,sans-serif";
-      const cap = document.createElement("div");
-      cap.textContent = text;
-      cap.style.cssText = "position:absolute;left:50%;top:10px;transform:translateX(-50%);max-width:92%;padding:6px 12px;border-radius:6px;background:rgba(15,23,42,.9);color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
-      root.append(cap);
-      if (box2) {
-        const ring = document.createElement("div");
-        ring.style.cssText = `position:absolute;left:${box2.x - 4}px;top:${box2.y - 4}px;width:${box2.width + 8}px;height:${box2.height + 8}px;border:3px solid #f59e0b;border-radius:6px;box-sizing:border-box`;
-        const cursor = document.createElement("div");
-        cursor.dataset.role = "cursor";
-        cursor.style.cssText = `position:absolute;left:${from2.x}px;top:${from2.y}px;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:rgba(15,23,42,.85);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);transition:left .35s ease,top .35s ease`;
-        root.append(ring, cursor);
-        document.documentElement.append(root);
-        requestAnimationFrame(() => {
-          cursor.style.left = `${box2.x + box2.width / 2}px`;
-          cursor.style.top = `${box2.y + box2.height / 2}px`;
-        });
-      } else {
-        document.documentElement.append(root);
-      }
-    },
-    { id: ID, text: `${String(index).padStart(2, "0")} \xB7 ${label}`, box, from }
-  ).catch(() => {
+  actions;
+  captionOverlay;
+  async start(path, size) {
+    await this.page.screencast.start({ path, size });
+    await this.showActions();
+  }
+  /** Playwright titles actions with their raw values (`Fill "…"`), so turn
+   *  the decorations off around steps that type a secret. */
+  async showActions() {
+    this.actions ??= await this.page.screencast.showActions({ cursor: "pointer", position: "top-right", fontSize: 16, duration: 450 });
+  }
+  async hideActions() {
+    await this.actions?.dispose();
+    this.actions = void 0;
+  }
+  async caption(text) {
+    await this.captionOverlay?.dispose();
+    this.captionOverlay = await this.page.screencast.showOverlay(`<div style="${CAPTION_STYLE}">${esc(text)}</div>`);
+  }
+  async stop() {
+    await this.page.screencast.stop();
+  }
+};
+async function cleanScreenshot(page) {
+  await page.screencast.hideOverlays().catch(() => {
   });
-  await page.waitForTimeout(ANNOTATE_MS);
-  return box ? { x: box.x + box.width / 2, y: box.y + box.height / 2 } : from;
-}
-async function ripple(page, at) {
-  await page.evaluate(
-    ({ id, at: at2 }) => {
-      const root = document.getElementById(id);
-      if (!root) return;
-      const r = document.createElement("div");
-      r.style.cssText = `position:absolute;left:${at2.x}px;top:${at2.y}px;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;border:3px solid #f59e0b;opacity:1;transform:scale(.3);transition:transform .45s ease-out,opacity .45s ease-out`;
-      root.append(r);
-      requestAnimationFrame(() => {
-        r.style.transform = "scale(1.4)";
-        r.style.opacity = "0";
-      });
-    },
-    { id: ID, at }
-  ).catch(() => {
-  });
+  try {
+    return await page.screenshot({ type: "jpeg", quality: 72 });
+  } finally {
+    await page.screencast.showOverlays().catch(() => {
+    });
+  }
 }
 
 // src/capture.ts
@@ -7691,13 +7668,14 @@ async function captureJourney(journey, opts) {
   const browser = await chromium.launch({ headless: !opts.headed });
   const context = await browser.newContext({
     ...contextOptions(vp, opts),
-    storageState: opts.storageState,
-    recordVideo: { dir: join4(opts.outDir, ".video"), size: videoSize(vp.width, vp.height) }
+    storageState: opts.storageState
   });
   mkdirSync(opts.outDir, { recursive: true });
   const page = await context.newPage();
-  const videoStart = Date.now();
   page.setDefaultTimeout(ACTION_TIMEOUT);
+  const narration = new Narration(page);
+  await narration.start(join4(opts.outDir, "journey.webm"), videoSize(vp.width, vp.height));
+  const videoStart = Date.now();
   let pending = emptySignals();
   page.on("console", (msg) => {
     if (msg.type() === "error") pending.consoleErrors.push(msg.text().slice(0, 300));
@@ -7710,7 +7688,6 @@ async function captureJourney(journey, opts) {
   let status = "completed";
   let prevHash = "";
   let prevUrl = "";
-  let cursor = { x: vp.width / 2, y: vp.height / 2 };
   if (!("goto" in journey.steps[0])) {
     await page.goto(opts.base.toString());
     await settle(page);
@@ -7721,16 +7698,19 @@ async function captureJourney(journey, opts) {
     const label = describe(step);
     const target = targetOf(step);
     const loc = target ? locate(page, target) : void 0;
-    const annotatedAt = Date.now();
-    cursor = await annotate(page, index, label, loc, cursor);
+    const secret = envRefs(step).length > 0;
     const started = Date.now();
+    await narration.caption(`${String(index).padStart(2, "0")} \xB7 ${label}`);
+    if (secret) await narration.hideActions();
     let error;
     const early = [];
+    let navMs = 0;
+    let acted = Date.now();
     try {
       await runStep(page, step, opts.base, loc, opts.env);
-      if ("click" in step) await ripple(page, cursor);
+      acted = Date.now();
+      if (navigates(step)) navMs = acted - started;
       if (changesScreen(step)) {
-        const acted = Date.now();
         for (const at of TRANSIENT_AT_MS) {
           await page.waitForTimeout(Math.max(0, at - (Date.now() - acted)));
           early.push({ buf: await snap(page), afterMs: Date.now() - acted });
@@ -7740,7 +7720,8 @@ async function captureJourney(journey, opts) {
     } catch (e) {
       error = e.message.split("\n")[0].slice(0, 300);
     }
-    const durationMs = Date.now() - started;
+    if (secret) await narration.showActions();
+    const durationMs = navMs + (Date.now() - acted);
     const buf = await snap(page);
     writeFileSync(join4(opts.outDir, shot), buf);
     const hash = sha1(buf);
@@ -7767,7 +7748,7 @@ async function captureJourney(journey, opts) {
       status: error ? "failed" : unchanged ? "no-change" : "ok",
       error,
       url: page.url(),
-      atMs: annotatedAt - videoStart,
+      atMs: started - videoStart,
       durationMs,
       frames,
       shot,
@@ -7780,26 +7761,20 @@ async function captureJourney(journey, opts) {
       break;
     }
   }
-  const video = page.video();
-  await context.close();
-  let videoFile;
-  if (video) {
-    await video.saveAs(join4(opts.outDir, "journey.webm"));
-    videoFile = `${journey.id}/journey.webm`;
-  }
-  rmSync(join4(opts.outDir, ".video"), { recursive: true, force: true });
+  await narration.stop();
   await browser.close();
-  const capture = { id: journey.id, status, viewport: opts.viewport, video: videoFile, steps: records };
+  const capture = { id: journey.id, status, viewport: opts.viewport, video: `${journey.id}/journey.webm`, steps: records };
   writeFileSync(join4(opts.outDir, "steps.json"), JSON.stringify(capture, null, 2));
   return capture;
 }
-var snap = (page) => page.screenshot({ type: "jpeg", quality: 72, style: SCREENSHOT_STYLE });
+var snap = cleanScreenshot;
 var sha1 = (buf) => createHash("sha1").update(buf).digest("hex");
 function videoSize(width, height) {
   const scale = Math.min(1, VIDEO_MAX_WIDTH / width);
   const even = (n) => Math.round(n * scale / 2) * 2;
   return { width: even(width), height: even(height) };
 }
+var navigates = (step) => "goto" in step || "reload" in step || "back" in step;
 function changesScreen(step) {
   return ["goto", "click", "press", "select", "check", "reload", "back"].some((k) => k in step);
 }
@@ -12065,11 +12040,11 @@ function buildReportData(runDir, run, verdicts, triage) {
   findings.sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]);
   return { runId: run.runId, createdAt: run.createdAt, lang: run.app.lang, app: run.app, journeys, findings, triage: triage.items };
 }
-var esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+var esc2 = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 function renderReport(data, fragment) {
   const name = data.app.name || new URL(data.app.url).host;
   const json = JSON.stringify(data).replace(/<\//g, "<\\/");
-  const body = `<title>${esc(name)} UX audit</title>
+  const body = `<title>${esc2(name)} UX audit</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -12391,7 +12366,7 @@ async function main() {
           manifest.journeys.push({ id: j.id, title: j.title, focus: j.focus, goal: j.goal, expect: j.expect, auth: j.auth, capture });
         }
       } finally {
-        rmSync2(authDir, { recursive: true, force: true });
+        rmSync(authDir, { recursive: true, force: true });
       }
       writeFileSync3(join7(dir, "run.json"), JSON.stringify(manifest, null, 2));
       const rel = relative(cwd, dir);

@@ -1,10 +1,10 @@
 import { createHash } from 'node:crypto';
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Locator, Page } from 'playwright';
 import { loadPlaywright, resolveViewport, sameOrigin } from './browser.ts';
-import { resolveEnv } from './env.ts';
-import { annotate, ripple, SCREENSHOT_STYLE, type Point } from './overlay.ts';
+import { envRefs, resolveEnv } from './env.ts';
+import { cleanScreenshot, Narration } from './overlay.ts';
 import type { Journey, JourneyCapture, Step, StepRecord, StepSignals, Target } from './schema.ts';
 
 const ACTION_TIMEOUT = 5_000;
@@ -101,12 +101,13 @@ export async function captureJourney(journey: Journey, opts: CaptureOptions): Pr
   const context = await browser.newContext({
     ...contextOptions(vp, opts),
     storageState: opts.storageState,
-    recordVideo: { dir: join(opts.outDir, '.video'), size: videoSize(vp.width, vp.height) },
   });
   mkdirSync(opts.outDir, { recursive: true });
   const page = await context.newPage();
-  const videoStart = Date.now();
   page.setDefaultTimeout(ACTION_TIMEOUT);
+  const narration = new Narration(page);
+  await narration.start(join(opts.outDir, 'journey.webm'), videoSize(vp.width, vp.height));
+  const videoStart = Date.now();
 
   let pending: StepSignals = emptySignals();
   page.on('console', (msg) => {
@@ -121,7 +122,6 @@ export async function captureJourney(journey: Journey, opts: CaptureOptions): Pr
   let status: JourneyCapture['status'] = 'completed';
   let prevHash = '';
   let prevUrl = '';
-  let cursor: Point = { x: vp.width / 2, y: vp.height / 2 };
 
   // Every journey starts from the app root unless its first step navigates.
   if (!('goto' in journey.steps[0]!)) {
@@ -136,17 +136,21 @@ export async function captureJourney(journey: Journey, opts: CaptureOptions): Pr
     const label = describe(step);
     const target = targetOf(step);
     const loc = target ? locate(page, target) : undefined;
-    const annotatedAt = Date.now();
-    cursor = await annotate(page, index, label, loc, cursor);
-    // Timed from here so the annotation pause doesn't count as app latency.
+    const secret = envRefs(step).length > 0;
     const started = Date.now();
+    await narration.caption(`${String(index).padStart(2, '0')} · ${label}`);
+    if (secret) await narration.hideActions();
     let error: string | undefined;
     const early: { buf: Buffer; afterMs: number }[] = [];
+    // Playwright pauses before each element action to show it in the video;
+    // only navigation time counts toward "slow", plus time to settle.
+    let navMs = 0;
+    let acted = Date.now();
     try {
       await runStep(page, step, opts.base, loc, opts.env);
-      if ('click' in step) await ripple(page, cursor);
+      acted = Date.now();
+      if (navigates(step)) navMs = acted - started;
       if (changesScreen(step)) {
-        const acted = Date.now();
         for (const at of TRANSIENT_AT_MS) {
           await page.waitForTimeout(Math.max(0, at - (Date.now() - acted)));
           early.push({ buf: await snap(page), afterMs: Date.now() - acted });
@@ -156,7 +160,8 @@ export async function captureJourney(journey: Journey, opts: CaptureOptions): Pr
     } catch (e) {
       error = (e as Error).message.split('\n')[0]!.slice(0, 300);
     }
-    const durationMs = Date.now() - started;
+    if (secret) await narration.showActions();
+    const durationMs = navMs + (Date.now() - acted);
     const buf = await snap(page);
     writeFileSync(join(opts.outDir, shot), buf);
     const hash = sha1(buf);
@@ -192,7 +197,7 @@ export async function captureJourney(journey: Journey, opts: CaptureOptions): Pr
       status: error ? 'failed' : unchanged ? 'no-change' : 'ok',
       error,
       url: page.url(),
-      atMs: annotatedAt - videoStart,
+      atMs: started - videoStart,
       durationMs,
       frames,
       shot,
@@ -206,22 +211,14 @@ export async function captureJourney(journey: Journey, opts: CaptureOptions): Pr
     }
   }
 
-  // The recording is finalised only once the context closes.
-  const video = page.video();
-  await context.close();
-  let videoFile: string | undefined;
-  if (video) {
-    await video.saveAs(join(opts.outDir, 'journey.webm'));
-    videoFile = `${journey.id}/journey.webm`;
-  }
-  rmSync(join(opts.outDir, '.video'), { recursive: true, force: true });
+  await narration.stop();
   await browser.close();
-  const capture: JourneyCapture = { id: journey.id, status, viewport: opts.viewport, video: videoFile, steps: records };
+  const capture: JourneyCapture = { id: journey.id, status, viewport: opts.viewport, video: `${journey.id}/journey.webm`, steps: records };
   writeFileSync(join(opts.outDir, 'steps.json'), JSON.stringify(capture, null, 2));
   return capture;
 }
 
-const snap = (page: Page) => page.screenshot({ type: 'jpeg', quality: 72, style: SCREENSHOT_STYLE });
+const snap = cleanScreenshot;
 
 const sha1 = (buf: Buffer) => createHash('sha1').update(buf).digest('hex');
 
@@ -231,6 +228,8 @@ function videoSize(width: number, height: number) {
   const even = (n: number) => Math.round((n * scale) / 2) * 2;
   return { width: even(width), height: even(height) };
 }
+
+const navigates = (step: Step) => 'goto' in step || 'reload' in step || 'back' in step;
 
 /** Steps after which the screen may pass through short-lived states. */
 function changesScreen(step: Step): boolean {

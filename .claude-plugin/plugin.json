@@ -1,23 +1,14 @@
 {
   "name": "uxaudit",
-  "version": "0.1.0",
-  "description": "A UX regression testing skill for browser-based and webview-based apps. Runs after E2E to catch usability, journey, accessibility, and interface-quality issues before they ship.",
+  "displayName": "UX Audit",
+  "version": "0.2.0-alpha.0",
+  "description": "Release-time UX checks: replay your product's key user journeys, judge them from screenshots alone, and triage findings in one shared report.",
   "homepage": "https://github.com/gotalab/uxaudit",
   "repository": "https://github.com/gotalab/uxaudit",
   "author": {
     "name": "gotalab",
     "url": "https://github.com/gotalab"
   },
-  "license": "MIT",
-  "keywords": [
-    "ux",
-    "audit",
-    "usability",
-    "accessibility",
-    "wcag",
-    "nielsen",
-    "playwright",
-    "journey-testing",
-    "ai-slop"
-  ]
+  "license": "Apache-2.0",
+  "keywords": ["ux", "usability", "release-check", "journey-testing", "playwright"]
 }

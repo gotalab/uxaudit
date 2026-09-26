@@ -1,0 +1,33 @@
+{
+  "name": "uxaudit",
+  "version": "0.2.0-alpha.0",
+  "description": "Release-time UX checks: replay your product's key user journeys, judge them from screenshots, and triage findings in one HTML report.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "bin": {
+    "uxaudit": "dist/uxaudit.mjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "pnpm build && node --test test/*.test.ts",
+    "demo:serve": "node examples/demo-app/serve.mjs"
+  },
+  "dependencies": {
+    "playwright": "1.62.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.6.0",
+    "yaml": "^2.6.0",
+    "zod": "^3.24.0"
+  },
+  "packageManager": "pnpm@12.4.2"
+}

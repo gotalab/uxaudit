@@ -30,3 +30,6 @@ output/
 plugin-data/
 registry.json
 library.html
+
+# v2 build intermediates (dist/ is committed so the plugin works without a build step)
+src/report/client.gen.txt

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in · Pantry</title>
+<style>
+  body { font: 16px/1.5 system-ui, sans-serif; margin: 0; background: #fafafa; color: #222; display: grid; place-items: center; min-height: 100vh; }
+  form { display: grid; gap: 12px; background: #fff; padding: 24px; border: 1px solid #ddd; border-radius: 8px; width: min(360px, 90vw); }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  label { display: grid; gap: 4px; font-size: 14px; }
+  input { font: inherit; padding: 8px; border: 1px solid #bbb; border-radius: 4px; }
+  button { font: inherit; padding: 10px; border-radius: 4px; border: 0; background: #2d6a4f; color: #fff; cursor: pointer; }
+</style>
+</head>
+<body>
+<form method="post" action="/login">
+  <h1>Sign in to Pantry</h1>
+  <label>Email <input name="email" type="email" autocomplete="username"></label>
+  <label>Password <input name="password" type="password" autocomplete="current-password"></label>
+  <button type="submit">Sign in</button>
+</form>
+</body>
+</html>

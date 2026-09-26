@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# uxaudit launcher for the Claude Code plugin (bin/ is on PATH while the plugin
+# is enabled). Playwright and Chromium are installed into the plugin data dir
+# on first use, not at session start, and never into the user's project.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+DATA="${CLAUDE_PLUGIN_DATA:-${XDG_CACHE_HOME:-$HOME/.cache}/uxaudit}"
+
+command -v node >/dev/null 2>&1 || { echo "uxaudit: Node.js 20+ is required" >&2; exit 1; }
+PW_VERSION="$(node -p "require('$ROOT/package.json').dependencies.playwright")"
+STAMP="$DATA/.playwright-$PW_VERSION"
+
+if [ ! -f "$STAMP" ]; then
+  echo "uxaudit: first run, installing Playwright $PW_VERSION and Chromium into $DATA ..." >&2
+  mkdir -p "$DATA"
+  (
+    cd "$DATA"
+    [ -f package.json ] || echo '{"private":true}' > package.json
+    npm install --no-audit --no-fund --silent "playwright@$PW_VERSION" >&2
+    # Chromium goes to Playwright's shared per-user cache and is reused if present.
+    # No --with-deps: that needs sudo. On bare Linux images run it once yourself.
+    npx --no-install playwright install chromium >&2
+  )
+  touch "$STAMP"
+fi
+
+export UXAUDIT_NODE_MODULES="$DATA/node_modules"
+exec node "$ROOT/dist/uxaudit.mjs" "$@"

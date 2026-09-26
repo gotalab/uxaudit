@@ -1,0 +1,81 @@
+version: 1
+app:
+  name: Pantry (demo)
+  url: http://localhost:4173
+  viewport: desktop
+  lang: ja
+
+# Start every run from an empty pantry.
+setup:
+  command: node seed.mjs empty
+
+auth:
+  member:
+    steps:
+      - goto: /login
+      - fill: { target: { label: Email }, value: demo@example.com }
+      - fill: { target: { label: Password }, value: "${env:DEMO_PASSWORD}" }
+      - click: { role: button, name: Sign in }
+      - see: Pantry
+
+journeys:
+  - id: first-recipe
+    title: 初めてのユーザーがレシピを1件保存する
+    focus: first-value
+    auth: member
+    before: node seed.mjs empty
+    goal: 初めて開いた人が、迷わず1件目のレシピを保存できる
+    expect:
+      - 最初の画面で何をするアプリか分かる
+      - 保存が成功したことが画面上で分かる
+    steps:
+      - goto: /
+      - click: New recipe
+      - fill: { target: { label: Title }, value: 肉じゃが }
+      - fill: { target: { label: Ingredients }, value: じゃがいも、牛肉、玉ねぎ }
+      - click: Save
+
+  - id: empty-title
+    title: タイトルを入れずに保存しようとする
+    focus: recovery
+    auth: member
+    goal: 入力ミスをしたとき、何が悪いか分かって直せる
+    expect:
+      - 何を直せばよいかが画面に表示される
+    steps:
+      - goto: /
+      - click: New recipe
+      - click: Save
+
+  - id: wrong-password
+    title: パスワードを間違えてサインインする
+    focus: recovery
+    goal: パスワードを間違えた人が、何が起きたか分かって再入力できる
+    expect:
+      - サインインに失敗したことと、その理由が表示される
+    steps:
+      - goto: /login
+      - fill: { target: { label: Email }, value: demo@example.com }
+      - fill: { target: { label: Password }, value: wrong-password }
+      - click: { role: button, name: Sign in }
+
+  - id: many-recipes
+    title: レシピが大量にある状態で一覧を見る
+    focus: data
+    auth: member
+    before: node seed.mjs many
+    goal: レシピが60件あり長いタイトルも混ざっていても、一覧から目的のレシピを見つけて読める
+    steps:
+      - goto: /
+      - scroll: { text: Your recipes }
+      - scroll: bottom
+
+  - id: mobile-first-look
+    title: スマホで最初の画面を見る
+    focus: first-value
+    auth: member
+    viewport: mobile
+    goal: スマホで開いた人が、画面が崩れずに最初の操作を始められる
+    steps:
+      - goto: /
+      - click: New recipe

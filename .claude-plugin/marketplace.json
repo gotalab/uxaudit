@@ -4,13 +4,13 @@
     "name": "gotalab"
   },
   "metadata": {
-    "description": "Agent skills from gotalab, including uxaudit for post-E2E UX regression testing."
+    "description": "Agent skills from gotalab, including uxaudit for release-time UX checks."
   },
   "plugins": [
     {
       "name": "uxaudit",
       "source": "./",
-      "description": "UX regression testing for browser-based and webview-based apps."
+      "description": "Release-time UX checks for web apps: key journeys, screenshot-only judging, shared triage."
     }
   ]
 }

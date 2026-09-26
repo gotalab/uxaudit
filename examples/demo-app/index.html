@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pantry</title>
+<!-- Demo app for uxaudit. It ships with deliberate UX problems:
+     - saving with an empty title silently does nothing (no error message)
+     - a successful save flashes a toast for 0.4s; the new item lands off-screen
+     - the empty list has no guidance
+     - the toolbar overflows horizontally on phones
+     - long recipe titles are clipped with no way to read them
+     (login.html: a wrong password reloads the empty form with no message) -->
+<style>
+  body { font: 16px/1.5 system-ui, sans-serif; margin: 0; background: #fafafa; color: #222; }
+  header { display: flex; gap: 12px; align-items: center; padding: 12px 20px; background: #fff; border-bottom: 1px solid #ddd; }
+  header h1 { font-size: 20px; margin: 0; }
+  .toolbar { display: flex; gap: 8px; min-width: 560px; }
+  main { max-width: 720px; margin: 0 auto; padding: 20px; }
+  form { display: grid; gap: 10px; background: #fff; padding: 16px; border: 1px solid #ddd; border-radius: 6px; }
+  form[hidden] { display: none; }
+  label { display: grid; gap: 4px; font-size: 14px; }
+  input, textarea { font: inherit; padding: 8px; border: 1px solid #bbb; border-radius: 4px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 4px; border: 1px solid #888; background: #fff; cursor: pointer; }
+  .primary { background: #2d6a4f; color: #fff; border-color: #2d6a4f; }
+  .spacer { height: 900px; }
+  ul { padding: 0; list-style: none; }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #222; color: #fff; padding: 10px 18px; border-radius: 6px; }
+  li { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 12px; margin-bottom: 8px; white-space: nowrap; overflow: hidden; height: 24px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Pantry</h1>
+  <div class="toolbar">
+    <button type="button" id="new">New recipe</button>
+    <button type="button">Import</button>
+    <button type="button">Export</button>
+    <button type="button">Settings</button>
+  </div>
+</header>
+<main>
+  <form id="form" hidden>
+    <label>Title <input id="title" name="title"></label>
+    <label>Ingredients <textarea id="ingredients" rows="3"></textarea></label>
+    <div><button type="submit" class="primary">Save</button></div>
+  </form>
+  <div class="spacer"></div>
+  <h2>Your recipes</h2>
+  <ul id="list"></ul>
+</main>
+<script>
+  const form = document.getElementById('form');
+  const list = document.getElementById('list');
+  const show = (title) => {
+    const li = document.createElement('li');
+    li.textContent = title;
+    list.append(li);
+  };
+  fetch('/api/recipes').then((r) => r.json()).then((items) => items.forEach(show));
+  document.getElementById('new').addEventListener('click', () => { form.hidden = false; });
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const title = document.getElementById('title').value.trim();
+    if (!title) return;
+    fetch('/api/recipes', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ title }) });
+    show(title);
+    form.reset();
+    form.hidden = true;
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = 'Saved';
+    document.body.append(toast);
+    setTimeout(() => toast.remove(), 400);
+  });
+</script>
+</body>
+</html>

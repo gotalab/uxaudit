@@ -105,7 +105,7 @@ E2E、accessibility check、manual QA との位置づけを含む長い説明は
 ## Requirements
 
 - **Claude Code** CLI と plugin marketplace support（Max plan 推奨）
-- **Node.js 20+** と **Python 3.10+**
+- **Node.js 24.22.1+ (24.x)** と **Python 3.10+**
 - **Playwright Chromium 用に約 300 MB の空き容量**
 
 journey check は Playwright first で動き、file picker / OS dialog / 外部 auth のように一時的に Playwright の外へ出るときだけ `computer-use` にエスカレーションする。判定は DOM inspection ではなく、visible な step-by-step state change に基づく。

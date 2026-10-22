@@ -1,0 +1,51 @@
+name: Node tooling
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: skills/uxaudit
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+          check-latest: true
+          cache: npm
+          cache-dependency-path: skills/uxaudit/package-lock.json
+      - name: Record runtime versions
+        run: |
+          node --version
+          npm --version
+      - name: Check plugin runtime prerequisites
+        run: python3 ../../hooks/test_ensure_deps.py
+      - run: npm ci
+      - run: npx --no-install playwright install --with-deps chromium
+      - name: Check catalog and existing fixtures
+        run: |
+          python3 scripts/validate_checks.py
+          python3 scripts/test_checks.py
+      - name: Exercise browser capture and accessibility check
+        run: |
+          fixture="$RUNNER_TEMP/uxaudit-smoke.html"
+          output="$RUNNER_TEMP/uxaudit-smoke"
+          printf '%s' '<!doctype html><html lang="en"><head><title>Runtime smoke</title></head><body><main><h1>Runtime smoke</h1><button>Continue</button></main></body></html>' > "$fixture"
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory "$RUNNER_TEMP" > "$RUNNER_TEMP/uxaudit-server.log" 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          url=http://127.0.0.1:8765/uxaudit-smoke.html
+          curl --fail --retry 10 --retry-connrefused --retry-delay 1 "$url" > /dev/null
+          node scripts/capture.mjs "$url" "$output"
+          test -s "$output/screenshot.png"
+          grep -q 'Runtime smoke' "$output/visible-text.txt"
+          node checks/accessibility/axe-core/run.mjs --url "$url" --output "$output/axe.json" --manifest checks/accessibility/axe-core/check.json
+          node --input-type=module -e "import fs from 'node:fs'; import assert from 'node:assert/strict'; assert.equal(JSON.parse(fs.readFileSync(process.argv[1])).result, 'pass');" "$output/axe.json"

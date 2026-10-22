@@ -105,7 +105,7 @@ See [Overview and positioning](./docs/overview.md) for the longer explanation of
 ## Requirements
 
 - **Claude Code** CLI with plugin marketplace support (Max plan recommended)
-- **Node.js 20+** and **Python 3.10+**
+- **Node.js 24.22.1+ (24.x)** and **Python 3.10+**
 - **~300 MB disk** for Playwright Chromium on first install
 
 Journey checks use Playwright first and escalate to `computer-use` only when the flow temporarily crosses outside Playwright's control (file pickers, OS dialogs, external auth). Verdicts are based on visible step-by-step state changes, not DOM inspection.

@@ -70,7 +70,7 @@ fi
 
 # --- 3. Prereq checks — warn but do not block session start -------------------
 if ! command -v node >/dev/null 2>&1; then
-  echo "[uxaudit] WARN: Node 20+ not found in PATH — /uxaudit will not work until it is installed (e.g. via nvm or brew)." >&2
+  echo "[uxaudit] WARN: Node.js 24.22.1+ (24.x) not found in PATH — /uxaudit will not work until it is installed (e.g. via nvm or brew)." >&2
   exit 0
 fi
 if ! command -v python3 >/dev/null 2>&1; then

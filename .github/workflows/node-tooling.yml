@@ -26,6 +26,8 @@ jobs:
         run: |
           node --version
           npm --version
+      - name: Check plugin runtime prerequisites
+        run: python3 ../../hooks/test_ensure_deps.py
       - run: npm ci
       - run: npx --no-install playwright install --with-deps chromium
       - name: Check catalog and existing fixtures

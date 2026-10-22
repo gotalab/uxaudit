@@ -15,7 +15,7 @@
 #      installs globally; nothing leaks into other projects'
 #      node_modules.
 #
-#   3. **Fast path** (must hold for the hook to no-op):
+#   3. **Fast path** (after validating the supported Node version):
 #      a. $CLAUDE_PLUGIN_DATA/node_modules/playwright/ exists
 #      b. The package.json checked into the plugin matches the one
 #         we previously copied to $CLAUDE_PLUGIN_DATA/package.json
@@ -35,7 +35,7 @@
 #      the user's shared cache. That's the user's resource, not ours;
 #      cleanup is `npx playwright uninstall` at their discretion.
 #
-#   5. **Prereq checks** (node, python3, npm) never abort the session
+#   5. **Prereq checks** (supported node, python3, npm) never abort the session
 #      — they warn and exit 0. A missing prereq only bites when the
 #      user actually invokes /uxaudit, at which point the orchestrator
 #      surfaces a clean error.
@@ -63,16 +63,24 @@ if [ -z "${CLAUDE_PLUGIN_ROOT:-}" ] || [ -z "${CLAUDE_PLUGIN_DATA:-}" ]; then
   exit 0
 fi
 
-# --- 2. Fast path: deps already installed and manifest unchanged --------------
-if [ -d "$PLAYWRIGHT_DIR" ] && [ -d "$AXE_CORE_DIR" ] && diff -q "$SKILL_PKG" "$DATA_PKG" >/dev/null 2>&1; then
-  exit 0
-fi
-
-# --- 3. Prereq checks — warn but do not block session start -------------------
+# --- 2. Node runtime — validate even when dependencies are cached ------------
 if ! command -v node >/dev/null 2>&1; then
   echo "[uxaudit] WARN: Node.js 24.22.1+ (24.x) not found in PATH — /uxaudit will not work until it is installed (e.g. via nvm or brew)." >&2
   exit 0
 fi
+if ! node_version="$(node --version 2>/dev/null)" ||
+   [[ ! "$node_version" =~ ^v24\.([0-9]+)\.([0-9]+)$ ]] ||
+   (( 10#${BASH_REMATCH[1]} < 22 || (10#${BASH_REMATCH[1]} == 22 && 10#${BASH_REMATCH[2]} < 1) )); then
+  echo "[uxaudit] WARN: Node.js 24.22.1+ (24.x) is required; found ${node_version:-unknown} — update Node.js before using /uxaudit." >&2
+  exit 0
+fi
+
+# --- 3. Fast path: deps already installed and manifest unchanged --------------
+if [ -d "$PLAYWRIGHT_DIR" ] && [ -d "$AXE_CORE_DIR" ] && diff -q "$SKILL_PKG" "$DATA_PKG" >/dev/null 2>&1; then
+  exit 0
+fi
+
+# --- 4. Other prereqs — warn but do not block session start -------------------
 if ! command -v python3 >/dev/null 2>&1; then
   echo "[uxaudit] WARN: python3 not found in PATH — /uxaudit will not work until it is installed (macOS/Linux ship with it by default)." >&2
   exit 0
@@ -82,7 +90,7 @@ if ! command -v npm >/dev/null 2>&1; then
   exit 0
 fi
 
-# --- 4. Install pinned version into $CLAUDE_PLUGIN_DATA -----------------------
+# --- 5. Install pinned version into $CLAUDE_PLUGIN_DATA -----------------------
 echo "[uxaudit] installing pinned Node dependencies ..." >&2
 
 set -e
